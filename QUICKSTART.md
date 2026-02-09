@@ -148,6 +148,23 @@ npm install
 2. 重新构建 npm
 3. 重新编译项目
 
+### Q5: 提示 TDesign 组件路径错误？
+
+**错误信息：**
+```
+app.json: ["usingComponents"]["t-toast"] 未找到组件
+```
+
+**原因：** 这是一个已知问题，已在最新版本修复。
+
+**解决方法：**
+1. 确保使用最新代码（已移除全局组件配置）
+2. 重新构建 npm
+3. 重新编译项目
+
+**详细说明：** 查看 [TROUBLESHOOTING.md](./TROUBLESHOOTING.md)
+
+
 ## 📚 更多文档
 
 - 📖 [完整设置指南](./SETUP_GUIDE.md) - 详细的设置说明
