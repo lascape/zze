@@ -1,0 +1,16 @@
+{
+  "name": "zze",
+  "version": "1.0.0",
+  "description": "Community Information Board Mini Program",
+  "main": "app.js",
+  "scripts": {
+    "dev": "echo 'Open the project in WeChat DevTools'",
+    "lint": "eslint ."
+  },
+  "keywords": ["wechat", "miniprogram", "tdesign"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "tdesign-miniprogram": "^1.5.0"
+  }
+}

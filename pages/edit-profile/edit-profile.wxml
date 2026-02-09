@@ -1,0 +1,47 @@
+<view class="edit-profile-page">
+  <!-- 头像选择 -->
+  <view class="form-section">
+    <view class="form-label">系统头像</view>
+    <view class="avatar-selector" bindtap="onAvatarTap">
+      <system-avatar avatar="{{selectedAvatar}}" size="large" />
+      <text class="change-text">点击更换</text>
+    </view>
+  </view>
+
+  <!-- 昵称编辑 -->
+  <view class="form-section">
+    <view class="form-label">昵称</view>
+    <t-input 
+      placeholder="请输入昵称" 
+      value="{{nickname}}"
+      maxlength="20"
+      bind:change="onNicknameChange"
+    />
+    <view class="hint-text">不能包含敏感词汇</view>
+  </view>
+
+  <!-- 保存按钮 -->
+  <view class="save-section">
+    <t-button theme="primary" size="large" block bindtap="onSave">
+      保存
+    </t-button>
+  </view>
+
+  <!-- 头像选择器弹窗 -->
+  <t-popup visible="{{showAvatarPicker}}" placement="bottom" bind:visible-change="onAvatarTap">
+    <view class="avatar-picker">
+      <view class="picker-title">选择系统头像</view>
+      <view class="avatars-grid">
+        <view 
+          wx:for="{{systemAvatars}}" 
+          wx:key="index"
+          class="avatar-item {{selectedAvatar === item ? 'selected' : ''}}"
+          data-avatar="{{item}}"
+          bindtap="onSelectAvatar"
+        >
+          <system-avatar avatar="{{item}}" size="large" />
+        </view>
+      </view>
+    </view>
+  </t-popup>
+</view>

@@ -1,0 +1,93 @@
+<view class="detail-page">
+  <scroll-view scroll-y class="content-scroll">
+    <!-- 作者信息 -->
+    <view class="author-section">
+      <system-avatar avatar="{{post.authorAvatar}}" size="medium" />
+      <view class="author-info">
+        <text class="author-name">{{post.authorName}}</text>
+        <text class="post-time">{{post.timeStr}}</text>
+      </view>
+    </view>
+
+    <!-- 标题和分类 -->
+    <view class="title-section">
+      <t-tag size="small" theme="primary">{{post.categoryName}}</t-tag>
+      <text class="title">{{post.title}}</text>
+    </view>
+
+    <!-- 参数信息 -->
+    <view wx:if="{{post.params}}" class="params-section">
+      <view wx:if="{{post.params.rent}}" class="param-row">
+        <text class="param-label">租金</text>
+        <text class="param-value price">{{post.params.rent}}</text>
+      </view>
+      <view wx:if="{{post.params.roomType}}" class="param-row">
+        <text class="param-label">户型</text>
+        <text class="param-value">{{post.params.roomType}}</text>
+      </view>
+      <view wx:if="{{post.params.area}}" class="param-row">
+        <text class="param-label">面积</text>
+        <text class="param-value">{{post.params.area}}</text>
+      </view>
+      <view wx:if="{{post.params.floor}}" class="param-row">
+        <text class="param-label">楼层</text>
+        <text class="param-value">{{post.params.floor}}</text>
+      </view>
+      <view wx:if="{{post.params.avgPrice}}" class="param-row">
+        <text class="param-label">人均</text>
+        <text class="param-value price">{{post.params.avgPrice}}</text>
+      </view>
+      <view wx:if="{{post.params.cuisine}}" class="param-row">
+        <text class="param-label">菜系</text>
+        <text class="param-value">{{post.params.cuisine}}</text>
+      </view>
+      <view wx:if="{{post.params.price}}" class="param-row">
+        <text class="param-label">价格</text>
+        <text class="param-value price">{{post.params.price}}</text>
+      </view>
+      <view wx:if="{{post.params.condition}}" class="param-row">
+        <text class="param-label">成色</text>
+        <text class="param-value">{{post.params.condition}}</text>
+      </view>
+      <view wx:if="{{post.params.serviceType}}" class="param-row">
+        <text class="param-label">服务类型</text>
+        <text class="param-value">{{post.params.serviceType}}</text>
+      </view>
+    </view>
+
+    <!-- 位置 -->
+    <view class="location-section">
+      <t-icon name="location" size="32rpx" />
+      <text class="location-text">{{post.communityName}} {{post.district}}</text>
+    </view>
+
+    <!-- 描述 -->
+    <view class="description-section">
+      <text class="description">{{post.description}}</text>
+    </view>
+
+    <!-- 图片 -->
+    <view wx:if="{{post.images && post.images.length > 0}}" class="images-section">
+      <image 
+        wx:for="{{post.images}}" 
+        wx:key="index"
+        class="post-image" 
+        src="{{item}}" 
+        mode="widthFix"
+        data-url="{{item}}"
+        bindtap="onPreviewImage"
+      />
+    </view>
+  </scroll-view>
+
+  <!-- 底部操作栏 -->
+  <view class="bottom-bar">
+    <view class="action-item" bindtap="onFavorite">
+      <t-icon name="{{isFavorited ? 'heart-filled' : 'heart'}}" size="48rpx" color="{{isFavorited ? '#ff6b6b' : '#666'}}" />
+      <text class="action-text">{{isFavorited ? '已收藏' : '收藏'}}</text>
+    </view>
+    <t-button theme="primary" size="large" class="contact-btn" bindtap="onContact">
+      私信TA
+    </t-button>
+  </view>
+</view>

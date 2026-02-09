@@ -1,0 +1,13 @@
+<view class="my-favorites-page">
+  <view wx:if="{{favoritePosts.length === 0}}" class="empty-state">
+    <t-empty description="暂无收藏" />
+  </view>
+  
+  <view wx:else class="favorites-list">
+    <info-card 
+      wx:for="{{favoritePosts}}" 
+      wx:key="id"
+      post="{{item}}"
+    />
+  </view>
+</view>
