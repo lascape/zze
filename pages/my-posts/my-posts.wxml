@@ -1,71 +1,7 @@
-<view class="my-posts-page">
-  <!-- 状态筛选 -->
-  <view class="tabs-section">
-    <t-tabs value="{{activeStatus}}" bind:change="onStatusChange">
-      <t-tab-panel label="全部" value="all" />
-      <t-tab-panel label="审核中" value="pending" />
-      <t-tab-panel label="已发布" value="approved" />
-      <t-tab-panel label="被驳回" value="rejected" />
-    </t-tabs>
-  </view>
+<block wx:if="condition1">
+  <!-- Your wx:for element goes here -->
+</block>
 
-  <!-- 帖子列表 -->
-  <view class="posts-list">
-    <view wx:if="{{displayPosts.length === 0}}">
-      <t-empty description="暂无发布" />
-    </view>
-    
-    <view 
-      wx:else
-      wx:for="{{displayPosts}}" 
-      wx:key="id"
-      class="post-card"
-      data-id="{{item.id}}"
-      data-status="{{item.status}}"
-      bindtap="onPostTap"
-    >
-      <view class="post-header">
-        <t-tag size="small" theme="primary">{{item.categoryName}}</t-tag>
-        <t-tag 
-          size="small" 
-          theme="{{item.status === 'approved' ? 'success' : item.status === 'pending' ? 'warning' : 'danger'}}"
-        >
-          {{item.status === 'approved' ? '已通过' : item.status === 'pending' ? '审核中' : '被驳回'}}
-        </t-tag>
-      </view>
-      
-      <view class="post-content">
-        <text class="post-title">{{item.title}}</text>
-        <text class="post-desc">{{item.description}}</text>
-        
-        <view wx:if="{{item.status === 'rejected' && item.rejectReason}}" class="reject-reason">
-          <text class="reason-label">驳回原因：</text>
-          <text class="reason-text">{{item.rejectReason}}</text>
-        </view>
-      </view>
-      
-      <view class="post-footer">
-        <text class="post-time">{{item.timeStr}}</text>
-        <view class="actions">
-          <t-button 
-            wx:if="{{item.status === 'rejected'}}"
-            size="small" 
-            theme="primary"
-            data-id="{{item.id}}"
-            catchtap="onResubmit"
-          >
-            重新提交
-          </t-button>
-          <t-button 
-            size="small" 
-            theme="default"
-            data-id="{{item.id}}"
-            catchtap="onDelete"
-          >
-            删除
-          </t-button>
-        </view>
-      </view>
-    </view>
-  </view>
-</view>
+<block wx:else>
+  <!-- Your wx:for element goes here -->
+</block>
