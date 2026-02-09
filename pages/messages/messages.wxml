@@ -8,51 +8,53 @@
   </view>
 
   <!-- 私信列表 -->
-  <view wx:if="{{activeTab === 'conversations'}}" class="conversations-list">
-    <view wx:if="{{conversations.length === 0}}">
+  <block wx:if="{{activeTab === 'conversations'}}" class="conversations-list">
+    <block wx:if="{{conversations.length === 0}}">
       <t-empty description="暂无私信" />
-    </view>
-    <view 
-      wx:else
-      wx:for="{{conversations}}" 
-      wx:key="id"
-      class="conversation-item"
-      data-id="{{item.id}}"
-      bindtap="onConversationTap"
-    >
-      <system-avatar avatar="{{item.avatar}}" size="medium" />
-      <view class="conversation-content">
-        <view class="conversation-header">
-          <text class="user-name">{{item.userName}}</text>
-          <text class="time">{{item.timeStr}}</text>
+    </block>
+    <block wx:else>
+      <view 
+        wx:for="{{conversations}}" 
+        wx:key="id"
+        class="conversation-item"
+        data-id="{{item.id}}"
+        bindtap="onConversationTap"
+      >
+        <system-avatar avatar="{{item.avatar}}" size="medium" />
+        <view class="conversation-content">
+          <view class="conversation-header">
+            <text class="user-name">{{item.userName}}</text>
+            <text class="time">{{item.timeStr}}</text>
+          </view>
+          <text class="last-message">{{item.lastMessage}}</text>
         </view>
-        <text class="last-message">{{item.lastMessage}}</text>
+        <t-badge wx:if="{{item.unread}}" count="{{item.unreadCount}}" />
       </view>
-      <t-badge wx:if="{{item.unread}}" count="{{item.unreadCount}}" />
-    </view>
-  </view>
+    </block>
+  </block>
 
   <!-- 通知列表 -->
-  <view wx:if="{{activeTab === 'notifications'}}" class="notifications-list">
-    <view wx:if="{{notifications.length === 0}}">
+  <block wx:if="{{activeTab === 'notifications'}}" class="notifications-list">
+    <block wx:if="{{notifications.length === 0}}">
       <t-empty description="暂无通知" />
-    </view>
-    <view 
-      wx:else
-      wx:for="{{notifications}}" 
-      wx:key="id"
-      class="notification-item {{item.read ? '' : 'unread'}}"
-      data-index="{{index}}"
-      bindtap="onNotificationTap"
-    >
-      <view class="notification-icon {{item.type}}">
-        <text>{{item.type === 'approved' ? '✓' : '×'}}</text>
+    </block>
+    <block wx:else>
+      <view 
+        wx:for="{{notifications}}" 
+        wx:key="id"
+        class="notification-item {{item.read ? '' : 'unread'}}"
+        data-index="{{index}}"
+        bindtap="onNotificationTap"
+      >
+        <view class="notification-icon {{item.type}}">
+          <text>{{item.type === 'approved' ? '✓' : '×'}}</text>
+        </view>
+        <view class="notification-content">
+          <text class="notification-title">{{item.title}}</text>
+          <text class="notification-desc">{{item.content}}</text>
+          <text class="time">{{item.timeStr}}</text>
+        </view>
       </view>
-      <view class="notification-content">
-        <text class="notification-title">{{item.title}}</text>
-        <text class="notification-desc">{{item.content}}</text>
-        <text class="time">{{item.timeStr}}</text>
-      </view>
-    </view>
-  </view>
+    </block>
+  </block>
 </view>
