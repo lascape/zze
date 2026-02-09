@@ -1,0 +1,40 @@
+<view class="info-card" bindtap="onCardTap">
+  <view class="card-header">
+    <view class="author-info">
+      <system-avatar avatar="{{post.authorAvatar}}" size="small" />
+      <text class="author-name">{{post.authorName}}</text>
+    </view>
+    <text class="post-time">{{formattedTime}}</text>
+  </view>
+  
+  <view class="card-content">
+    <view class="title-row">
+      <t-tag wx:if="{{post.category}}" size="small" theme="primary">
+        {{post.categoryName || post.category}}
+      </t-tag>
+      <text class="title">{{post.title}}</text>
+    </view>
+    
+    <text class="description">{{post.description}}</text>
+    
+    <view wx:if="{{post.images && post.images.length > 0}}" class="images">
+      <image 
+        wx:for="{{post.images}}" 
+        wx:key="index"
+        class="post-image" 
+        src="{{item}}" 
+        mode="aspectFill"
+      />
+    </view>
+    
+    <view class="card-footer">
+      <text class="location">{{post.communityName || ''}} {{post.district || ''}}</text>
+      <view wx:if="{{post.params}}" class="params">
+        <text wx:if="{{post.params.rent}}" class="param-item price">{{post.params.rent}}</text>
+        <text wx:if="{{post.params.avgPrice}}" class="param-item price">{{post.params.avgPrice}}</text>
+        <text wx:if="{{post.params.price}}" class="param-item price">{{post.params.price}}</text>
+        <text wx:if="{{post.params.roomType}}" class="param-item">{{post.params.roomType}}</text>
+      </view>
+    </view>
+  </view>
+</view>

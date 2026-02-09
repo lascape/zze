@@ -1,0 +1,11 @@
+{
+  "navigationBarTitleText": "发布信息",
+  "usingComponents": {
+    "t-input": "tdesign-miniprogram/input/input",
+    "t-textarea": "tdesign-miniprogram/textarea/textarea",
+    "t-picker": "tdesign-miniprogram/picker/picker",
+    "t-button": "tdesign-miniprogram/button/button",
+    "t-image": "tdesign-miniprogram/image/image",
+    "t-icon": "tdesign-miniprogram/icon/icon"
+  }
+}
