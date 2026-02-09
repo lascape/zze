@@ -78,6 +78,22 @@
 - ✅ TDesign 组件测试
 - ✅ 边界情况测试
 
+### 故障排除指南
+👉 **[TROUBLESHOOTING.md](./TROUBLESHOOTING.md)** - 常见问题修复
+
+内容包括：
+- ✅ TDesign 组件路径错误
+- ✅ Toast 和 Message 使用方法
+- ✅ 其他组件问题解决方案
+
+### 最新修复
+👉 **[问题已修复.md](./问题已修复.md)** - 最新问题修复记录
+
+内容包括：
+- ✅ 组件路径错误修复
+- ✅ 应用修复步骤
+- ✅ 验证方法
+
 ## 🛠️ 工具和脚本
 
 ### 环境检查脚本
@@ -164,10 +180,12 @@ check-env.bat         # Windows
 
 如果在使用过程中遇到问题：
 
-1. 首先查看 **[QUICKSTART.md](./QUICKSTART.md)** 的常见问题部分
-2. 运行环境检查脚本：`bash check-env.sh`
-3. 查看微信开发者工具的控制台错误信息
-4. 参考 **[SETUP_GUIDE.md](./SETUP_GUIDE.md)** 的调试技巧
+1. 首先查看 **[问题已修复.md](./问题已修复.md)** - 最新修复的问题
+2. 查看 **[TROUBLESHOOTING.md](./TROUBLESHOOTING.md)** - 故障排除指南
+3. 查看 **[QUICKSTART.md](./QUICKSTART.md)** 的常见问题部分
+4. 运行环境检查脚本：`bash check-env.sh`
+5. 查看微信开发者工具的控制台错误信息
+6. 参考 **[SETUP_GUIDE.md](./SETUP_GUIDE.md)** 的调试技巧
 
 ---
 
