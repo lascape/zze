@@ -1,8 +1,29 @@
 <view class="community-page">
-  <!-- 社区切换 -->
-  <view class="community-selector" bindtap="onCommunityTap">
-    <text class="community-name">{{currentCommunity.name}}</text>
-    <text class="arrow">›</text>
+  <!-- 顶部社区切换 -->
+  <view class="community-header" bindtap="onCommunityTap">
+    <view class="header-left">
+      <text class="community-icon">📍</text>
+      <text class="community-name">{{currentCommunity.name}}</text>
+      <text class="arrow">▾</text>
+    </view>
+    <view class="header-right">
+      <text class="search-icon">🔍</text>
+      <text class="notification-icon">🔔</text>
+    </view>
+  </view>
+
+  <!-- Banner -->
+  <view class="banner">
+    <view class="banner-content">
+      <view class="banner-text">
+        <text class="banner-title">社区信息板</text>
+        <text class="banner-subtitle">租房 · 餐饮 · 二手 · 服务</text>
+        <view class="banner-button" bindtap="onDiscoverTap">去发现（附近30km）</view>
+      </view>
+      <view class="banner-icon">
+        <text class="icon-city">🏘️</text>
+      </view>
+    </view>
   </view>
 
   <!-- 分类宫格 -->
@@ -14,14 +35,19 @@
       data-id="{{item.id}}"
       bindtap="onCategoryTap"
     >
-      <view class="category-icon">{{item.name}}</view>
+      <view class="category-icon {{item.colorClass}}">
+        <text class="icon">{{item.icon}}</text>
+      </view>
       <text class="category-name">{{item.name}}</text>
     </view>
   </view>
 
   <!-- 信息流 -->
   <view class="posts-section">
-    <view class="section-title">社区动态</view>
+    <view class="section-header">
+      <text class="section-title">最新动态</text>
+      <text class="section-more" bindtap="onDiscoverTap">查看更多</text>
+    </view>
     
     <t-loading wx:if="{{loading}}" theme="circular" size="40rpx" />
     
@@ -33,6 +59,9 @@
       />
     </view>
     
-    <t-empty wx:else description="暂无动态" />
+    <view wx:else class="empty-state">
+      <t-empty description="当前社区暂无内容" />
+      <view class="empty-tip">你可以先去发现页查看附近30km，或发布第一条信息</view>
+    </view>
   </view>
 </view>
