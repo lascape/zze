@@ -1,0 +1,37 @@
+<!-- pages/chat/chat.wxml -->
+<view class="chat-page">
+  <view class="status-bar" style="height: {{ statusBarHeight }}px;"></view>
+  <view class="chat-header">
+    <view class="back-btn" bindtap="onBack">
+      <t-icon name="chevron-left" size="22" color="#333" />
+    </view>
+    <text class="chat-title">{{ peerName }}</text>
+    <view class="header-spacer"></view>
+  </view>
+
+  <scroll-view
+    class="chat-body"
+    scroll-y
+    scroll-with-animation
+    scroll-into-view="{{ scrollToId }}"
+  >
+    <view wx:for="{{ messages }}" wx:key="id" class="msg-row" id="{{ 'msg-' + item.id }}">
+      <view class="msg-time" wx:if="{{ item.showTime }}">{{ item.time }}</view>
+      <view class="msg-bubble {{ item.from === 'me' ? 'me' : 'other' }}">
+        <text class="msg-text">{{ item.text }}</text>
+      </view>
+    </view>
+  </scroll-view>
+
+  <view class="chat-input" style="padding-bottom: {{ safeAreaInsetBottom }}px;">
+    <input
+      class="input-box"
+      value="{{ inputValue }}"
+      placeholder="输入消息..."
+      bindinput="onInput"
+      confirm-type="send"
+      bindconfirm="onSend"
+    />
+    <view class="send-btn" bindtap="onSend">发送</view>
+  </view>
+</view>

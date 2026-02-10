@@ -1,0 +1,67 @@
+<!-- 发布页 - 选择发布类型 -->
+<view class="publish-tab">
+  <!-- 页面标题 -->
+  <view class="publish-header">
+    <text class="publish-title">发布信息</text>
+  </view>
+
+  <!-- 提示信息 -->
+  <view class="publish-tips">
+    <text class="tips-text">禁止中介、禁止留微信/电话/外链/二维码。仅站内私信沟通；违规将驳回或下架。</text>
+  </view>
+
+  <!-- 发布类型选择 -->
+  <t-row class="publish-types" gutter="8">
+    <!-- 发布租房 -->
+    <t-col class="publish-col" span="12">
+      <view class="type-card blue" bindtap="onTypeTap" data-type="rental">
+        <view class="type-icon-wrapper blue-bg">
+          <t-icon name="home" size="28" color="#3B82F6" />
+        </view>
+        <view class="type-info">
+          <text class="type-title">发布租房</text>
+          <text class="type-desc">转租/合租/整租</text>
+        </view>
+      </view>
+    </t-col>
+
+    <!-- 发布美食 -->
+    <t-col class="publish-col" span="12">
+      <view class="type-card orange" bindtap="onTypeTap" data-type="food">
+        <view class="type-icon-wrapper orange-bg">
+          <t-icon name="fork" size="28" color="#F97316" />
+        </view>
+        <view class="type-info">
+          <text class="type-title">发布美食</text>
+          <text class="type-desc">推荐/优惠</text>
+        </view>
+      </view>
+    </t-col>
+
+    <!-- 发布二手 -->
+    <t-col class="publish-col" span="12">
+      <view class="type-card green" bindtap="onTypeTap" data-type="used">
+        <view class="type-icon-wrapper green-bg">
+          <t-icon name="cart" size="28" color="#10B981" />
+        </view>
+        <view class="type-info">
+          <text class="type-title">发布二手</text>
+          <text class="type-desc">闲置转让</text>
+        </view>
+      </view>
+    </t-col>
+
+    <!-- 发布服务 -->
+    <t-col class="publish-col" span="12">
+      <view class="type-card purple" bindtap="onTypeTap" data-type="service">
+        <view class="type-icon-wrapper purple-bg">
+          <t-icon name="service" size="28" color="#A855F7" />
+        </view>
+        <view class="type-info">
+          <text class="type-title">发布服务</text>
+          <text class="type-desc">保洁/维修等</text>
+        </view>
+      </view>
+    </t-col>
+  </t-row>
+</view>

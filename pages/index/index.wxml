@@ -1,38 +1,48 @@
 <!--index.wxml-->
 <view class="community-page">
   <!-- 状态栏占位 -->
-  <view class="status-bar" style="height: {{ statusBarHeight }}px;"></view>
-  
+  <view class="status-bar" style="height: {{ statusBarHeight }}px;">
+  </view>
   <!-- 自定义顶部 -->
   <view class="custom-header">
     <!-- 社区页面顶部 -->
-    <view wx:if="{{currentTab === 'community'}}" class="location-bar" bindtap="onCommunityTap">
+    <view
+      wx:if="{{currentTab === 'community'}}"
+      class="location-bar"
+      bindtap="onCommunityTap"
+    >
       <view class="location-info">
-        <t-icon name="location" size="20" color="#FF6B35" />
+        <t-icon
+          name="location"
+          size="20"
+          color="#FF6B35" />
         <text class="community-name">{{ currentCommunity }}</text>
-        <t-icon name="chevron-down" size="16" color="#999" />
+        <t-icon
+          name="chevron-down"
+          size="16"
+          color="#999" />
       </view>
     </view>
-    
     <!-- 发现页面顶部 -->
     <view wx:if="{{currentTab === 'discover'}}" class="title-bar">
       <text class="page-title">发现</text>
       <text class="subtitle">附近30km</text>
     </view>
-    
     <!-- 消息页面顶部 -->
     <view wx:if="{{currentTab === 'messages'}}" class="title-bar">
       <text class="page-title">消息</text>
     </view>
-    
     <!-- 我的页面顶部 -->
     <view wx:if="{{currentTab === 'profile'}}" class="title-bar">
       <text class="page-title">我的</text>
     </view>
   </view>
-  
   <!-- 主内容区 -->
-  <scroll-view class="main-content" scroll-y>
+  <scroll-view
+    class="main-content"
+    scroll-y
+    style="padding-bottom: {{bottomSafeHeight}}px;"
+  >
     <!-- 社区动态页 -->
     <community-tab
       wx:if="{{currentTab === 'community'}}"
@@ -46,9 +56,7 @@
       bind:posttap="onPostTap"
       bind:liketap="onLikeTap"
       bind:commenttap="onCommentTap"
-      bind:contacttap="onContactTap"
-    />
-
+      bind:contacttap="onContactTap" />
     <!-- 发现页 -->
     <discover-tab
       wx:if="{{currentTab === 'discover'}}"
@@ -64,18 +72,14 @@
       bind:resetfilter="onResetFilter"
       bind:sorttap="onSortTap"
       bind:posttap="onPostTap"
-      bind:contacttap="onContactTap"
-    />
-
+      bind:contacttap="onContactTap" />
     <!-- 消息页 -->
     <messages-tab
       wx:if="{{currentTab === 'messages'}}"
       chats="{{chats}}"
       notices="{{notices}}"
       bind:chattap="onChatTap"
-      bind:safetytipstap="onSafetyTipsTap"
-    />
-
+      bind:safetytipstap="onSafetyTipsTap" />
     <!-- 我的页 -->
     <profile-tab
       wx:if="{{currentTab === 'profile'}}"
@@ -84,20 +88,37 @@
       bind:edittap="onEditNicknameTap"
       bind:mypoststap="onMyPostsTap"
       bind:favoritestap="onFavoritesTap"
-      bind:safetytap="onProfileSafetyTap"
-    />
+      bind:safetytap="onProfileSafetyTap" />
   </scroll-view>
-
   <!-- 底部导航栏 -->
-  <t-tab-bar value="{{currentTab}}" bindchange="onTabChange" split="{{false}}">
+  <t-tab-bar
+    value="{{currentTab}}"
+    bindchange="onTabChange"
+    split="{{false}}"
+  >
     <t-tab-bar-item value="community" icon="home">社区</t-tab-bar-item>
     <t-tab-bar-item value="discover" icon="browse">发现</t-tab-bar-item>
-    <t-tab-bar-item value="publish" icon="add" class="tab-publish">
-      <view class="publish-icon" bindtap="onPublishTap">
-        <t-icon name="add" size="28" color="#fff" />
-      </view>
+    <t-tab-bar-item value="publish" class="tab-publish">
     </t-tab-bar-item>
-    <t-tab-bar-item value="messages" icon="mail" badge-props="{{unreadCount > 0 ? {count: unreadCount} : null}}">消息</t-tab-bar-item>
+    <t-tab-bar-item
+      value="messages"
+      icon="mail"
+      badge-props="{{unreadCount > 0 ? {count: unreadCount} : null}}"
+    >
+      消息
+    </t-tab-bar-item>
     <t-tab-bar-item value="profile" icon="user">我的</t-tab-bar-item>
   </t-tab-bar>
+  <view
+    class="publish-icon"
+    bindtap="onPublishTap"
+    style="margin-bottom: {{bottomSafeHeight}}px;"
+  >
+    <t-icon
+      name="add"
+      size="28"
+      color="#fff" />
+  </view>
+  <!-- 发布类型选择弹窗 -->
+  <t-popup visible="{{ showPublishModal }}" bind:visible-change="onPublishModalChange" placement="bottom" close-on-overlay-click="{{ true }}" > <publish-tab bind:typetap="onPublishTypeTap" /> </t-popup>
 </view>

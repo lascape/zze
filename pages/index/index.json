@@ -2,6 +2,7 @@
   "usingComponents": {
     "community-tab": "/pages/community/community",
     "discover-tab": "/pages/discover/discover",
+    "publish-tab": "/pages/publish/publish",
     "messages-tab": "/pages/messages/messages",
     "profile-tab": "/pages/profile/profile",
     "navigation-bar": "/components/navigation-bar/navigation-bar",
@@ -19,7 +20,8 @@
     "t-tab-bar": "tdesign-miniprogram/tab-bar/tab-bar",
     "t-tab-bar-item": "tdesign-miniprogram/tab-bar-item/tab-bar-item",
     "t-tabs": "tdesign-miniprogram/tabs/tabs",
-    "t-tab-panel": "tdesign-miniprogram/tab-panel/tab-panel"
+    "t-tab-panel": "tdesign-miniprogram/tab-panel/tab-panel",
+    "t-popup": "tdesign-miniprogram/popup/popup"
   },
   "navigationStyle": "custom"
 }

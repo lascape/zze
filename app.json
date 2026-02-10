@@ -1,7 +1,9 @@
 {
   "pages": [
     "pages/index/index",
-    "pages/discover/discover"
+    "pages/discover/discover",
+    "pages/post-form/post-form",
+    "pages/chat/chat"
   ],
   "window": {
     "navigationBarTextStyle": "black",

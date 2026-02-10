@@ -14,7 +14,7 @@ page {
 /* 自定义顶部 */
 .custom-header {
   background-color: #fff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
 }
 
 .status-bar {
@@ -23,38 +23,38 @@ page {
 }
 
 .location-bar {
-  padding: 12px 20px;
+  padding: 24rpx 40rpx;
   background-color: #fff;
 }
 
 .location-info {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 12rpx;
 }
 
 .community-name {
-  font-size: 18px;
+  font-size: 36rpx;
   font-weight: 600;
   color: #000;
 }
 
 .title-bar {
-  padding: 12px 20px;
+  padding: 24rpx 40rpx;
   background-color: #fff;
   display: flex;
   align-items: baseline;
-  gap: 8px;
+  gap: 16rpx;
 }
 
 .page-title {
-  font-size: 20px;
+  font-size: 40rpx;
   font-weight: 700;
   color: #000;
 }
 
 .subtitle {
-  font-size: 12px;
+  font-size: 24rpx;
   color: #999;
 }
 
@@ -62,7 +62,6 @@ page {
 .main-content {
   flex: 1;
   overflow-y: auto;
-  padding-bottom: 80px;
   z-index: 0;
 }
 
@@ -80,32 +79,36 @@ page {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 60px 20px;
-  gap: 12px;
+  padding: 120rpx 40rpx;
+  gap: 24rpx;
 }
 
 .empty-text {
-  font-size: 14px;
+  font-size: 28rpx;
   color: #999;
 }
 
 /* 底部TabBar自定义样式 */
 .tab-publish {
   position: relative;
-}
-
-.publish-icon {
-  position: absolute;
-  top: -20px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 56px;
-  height: 56px;
-  border-radius: 28px;
-  background: linear-gradient(135deg, #FF6B35 0%, #FF8C69 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
-  border: 4px solid #fff;
+}
+
+.publish-icon {
+  position: fixed;
+  left: 50%;
+  bottom: 30rpx;
+  transform: translateX(-50%);
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 100rpx;
+  background: linear-gradient(135deg, #FF6B35 0%, #FF8C69 100%);
+  display: flex;
+  z-index: 10;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8rpx 24rpx rgba(255, 107, 53, 0.3);
+  border: 8rpx solid #fff;
 }

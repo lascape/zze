@@ -1,0 +1,222 @@
+<!-- 发布表单页 -->
+<view class="post-form-page">
+  <!-- 自定义导航栏 -->
+  <view class="custom-navbar" style="padding-top: {{ statusBarHeight }}px;">
+    <view class="navbar-content">
+      <view class="navbar-left" bindtap="onBackTap">
+        <t-icon
+          name="chevron-left"
+          size="24"
+          color="#000" />
+        <text class="navbar-back-text">返回</text>
+      </view>
+      <text class="navbar-title">{{ formTitle }}</text>
+      <view class="navbar-right">
+      </view>
+    </view>
+  </view>
+  <view class="post-form">
+    <!-- 提示信息 -->
+    <view class="form-tips">
+      <text class="tips-text">提交后进入审核；通过后才会展示。禁止中介与任何联系方式（微信/电话/外链/二维码）。</text>
+    </view>
+    <!-- 表单字段 -->
+    <view class="form-fields">
+      <!-- 社区选择 -->
+      <view class="form-item">
+        <text class="field-label">社区（必填）</text>
+        <view class="field-select" bindtap="onCommunityTap">
+          <text class="select-value">{{ formData.community || '请选择' }}</text>
+          <t-icon
+            name="chevron-right"
+            size="20"
+            color="#ccc" />
+        </view>
+        <text class="field-hint">位置默认模糊展示，仅显示社区名（可选片区）。</text>
+      </view>
+      <!-- 片区 -->
+      <view class="form-item">
+        <text class="field-label">片区/楼区（选填）</text>
+        <input
+          class="field-input"
+          placeholder="如：东区 / 西区 / 北门附近（不要填写门牌单元）"
+          value="{{ formData.area }}"
+          bindinput="onAreaInput" />
+      </view>
+
+      <!-- 类型特定字段 -->
+      <!-- 租房 -->
+      <block wx:if="{{ postType === 'rental' }}">
+        <view class="form-row">
+          <view class="form-item half">
+            <text class="field-label">租金/月（必填）</text>
+            <input
+              class="field-input"
+              type="number"
+              placeholder="如：3500"
+              value="{{ formData.price }}"
+              bindinput="onPriceInput" />
+          </view>
+          <view class="form-item half">
+            <text class="field-label">方式（必填）</text>
+            <picker
+              mode="selector"
+              range="{{ rentTypes }}"
+              value="{{ rentTypeIndex }}"
+              bindchange="onRentTypeChange"
+            >
+              <view class="field-picker">
+                <text class="picker-value">{{ formData.rentType || '请选择' }}</text>
+                <t-icon
+                  name="chevron-down"
+                  size="16"
+                  color="#ccc" />
+              </view>
+            </picker>
+          </view>
+        </view>
+        <view class="form-item">
+          <text class="field-label">户型（必填）</text>
+          <input
+            class="field-input"
+            placeholder="如：两室一厅"
+            value="{{ formData.layout }}"
+            bindinput="onLayoutInput" />
+        </view>
+      </block>
+      <!-- 美食 -->
+      <block wx:elif="{{ postType === 'food' }}">
+        <view class="form-item">
+          <text class="field-label">店名（必填）</text>
+          <input
+            class="field-input"
+            placeholder="如：老王拉面"
+            value="{{ formData.shopName }}"
+            bindinput="onShopNameInput" />
+        </view>
+        <view class="form-row">
+          <view class="form-item half">
+            <text class="field-label">品类（必填）</text>
+            <input
+              class="field-input"
+              placeholder="如：面食/火锅"
+              value="{{ formData.category }}"
+              bindinput="onCategoryInput" />
+          </view>
+          <view class="form-item half">
+            <text class="field-label">人均（选填）</text>
+            <input
+              class="field-input"
+              type="number"
+              placeholder="如：25"
+              value="{{ formData.perCapita }}"
+              bindinput="onPerCapitaInput" />
+          </view>
+        </view>
+      </block>
+      <!-- 二手 -->
+      <block wx:elif="{{ postType === 'used' }}">
+        <view class="form-row">
+          <view class="form-item half">
+            <text class="field-label">售价（必填）</text>
+            <input
+              class="field-input"
+              type="number"
+              placeholder="如：280"
+              value="{{ formData.price }}"
+              bindinput="onPriceInput" />
+          </view>
+          <view class="form-item half">
+            <text class="field-label">成色（必填）</text>
+            <picker
+              mode="selector"
+              range="{{ qualities }}"
+              value="{{ qualityIndex }}"
+              bindchange="onQualityChange"
+            >
+              <view class="field-picker">
+                <text class="picker-value">{{ formData.quality || '请选择' }}</text>
+                <t-icon
+                  name="chevron-down"
+                  size="16"
+                  color="#ccc" />
+              </view>
+            </picker>
+          </view>
+        </view>
+      </block>
+      <!-- 服务 -->
+      <block wx:elif="{{ postType === 'service' }}">
+        <view class="form-item">
+          <text class="field-label">服务类型（必填）</text>
+          <input
+            class="field-input"
+            placeholder="如：保洁/维修/跑腿"
+            value="{{ formData.serviceType }}"
+            bindinput="onServiceTypeInput" />
+        </view>
+        <view class="form-item">
+          <text class="field-label">参考价（选填）</text>
+          <input
+            class="field-input"
+            placeholder="如：¥99起"
+            value="{{ formData.refPrice }}"
+            bindinput="onRefPriceInput" />
+        </view>
+      </block>
+
+      <!-- 标题 -->
+      <view class="form-item">
+        <text class="field-label">标题（必填）</text>
+        <input
+          class="field-input"
+          placeholder="用一句话说清楚关键信息"
+          value="{{ formData.title }}"
+          bindinput="onTitleInput" />
+      </view>
+
+      <!-- 详情描述 -->
+      <view class="form-item">
+        <text class="field-label">详情描述（必填）</text>
+        <textarea
+          class="field-textarea"
+          placeholder="请勿留下微信/电话/外链/二维码；平台仅支持站内私信"
+          value="{{ formData.desc }}"
+          bindinput="onDescInput"
+        >
+        </textarea>
+      </view>
+
+      <!-- 图片上传 -->
+      <view class="form-item">
+        <text class="field-label">图片数量（{{ postType === 'food' ? '至少1张' : '建议至少3张' }}，示意）</text>
+        <view class="image-counter">
+          <view class="counter-btn" bindtap="onImageDecrease">
+            <t-icon
+              name="remove"
+              size="20"
+              color="#666" />
+          </view>
+          <view class="counter-display">
+            <text class="counter-text">
+              已选择
+              <text class="counter-num">{{ formData.images || 0 }}</text>
+              张
+            </text>
+          </view>
+          <view class="counter-btn" bindtap="onImageIncrease">
+            <t-icon
+              name="add"
+              size="20"
+              color="#666" />
+          </view>
+        </view>
+      </view>
+    </view>
+    <!-- 提交按钮 -->
+    <view class="form-actions">
+      <button class="submit-btn" bindtap="onSubmitTap">提交审核</button>
+      <button class="draft-btn" bindtap="onDraftTap">保存草稿并退出</button>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,210 @@
+/* pages/post-form/post-form.wxss */
+.post-form-page {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+}
+
+/* 自定义导航栏 */
+.custom-navbar {
+  background-color: #fff;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.navbar-content {
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+}
+
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.navbar-back-text {
+  font-size: 16px;
+  color: #000;
+}
+
+.navbar-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 17px;
+  font-weight: 600;
+  color: #000;
+}
+
+.navbar-right {
+  width: 60px;
+}
+
+.post-form {
+  padding: 16px;
+  padding-bottom: 140px;
+}
+
+/* 提示信息 */
+.form-tips {
+  background-color: #f5f5f5;
+  border-radius: 16px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+}
+
+.tips-text {
+  font-size: 11px;
+  color: #999;
+  line-height: 1.7;
+}
+
+/* 表单字段 */
+.form-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.form-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-item.half {
+  flex: 1;
+  min-width: 0;
+}
+
+.form-row {
+  display: flex;
+  gap: 12px;
+}
+
+.field-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.field-input,
+.field-textarea,
+.field-select,
+.field-picker {
+  background-color: #f8fafc;
+  border-radius: 16px;
+  padding: 12px 16px;
+  font-size: 14px;
+  color: #1f2937;
+}
+
+.field-input,
+.field-textarea {
+  border: none;
+  outline: none;
+}
+
+.field-textarea {
+  min-height: 100px;
+  line-height: 1.5;
+}
+
+.field-select,
+.field-picker {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.select-value,
+.picker-value {
+  font-size: 14px;
+  color: #000;
+}
+
+.field-hint {
+  font-size: 10px;
+  color: #999;
+}
+
+/* 图片计数器 */
+.image-counter {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.counter-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 16px;
+  background-color: #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.counter-display {
+  flex: 1;
+  background-color: #f8fafc;
+  border-radius: 16px;
+  padding: 12px 16px;
+}
+
+.counter-text {
+  font-size: 14px;
+  color: #000;
+}
+
+.counter-num {
+  font-weight: 700;
+}
+
+/* 操作按钮 */
+.form-actions {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #fff;
+  padding: 16px;
+  padding-bottom: calc(16px + env(safe-area-inset-bottom));
+  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 10;
+}
+
+.submit-btn {
+  height: 48px;
+  background: linear-gradient(to top right, #fb923c, #f97316);
+  border-radius: 16px;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+  box-shadow: 0 8px 16px rgba(251, 146, 60, 0.25);
+}
+
+.submit-btn::after {
+  border: none;
+}
+
+.draft-btn {
+  height: 48px;
+  background-color: #f1f5f9;
+  border-radius: 16px;
+  color: #64748b;
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+}
+
+.draft-btn::after {
+  border: none;
+}
