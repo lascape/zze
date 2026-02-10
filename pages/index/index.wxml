@@ -1,0 +1,99 @@
+<!--index.wxml-->
+<view class="community-page">
+  <!-- 状态栏占位 -->
+  <view class="status-bar" style="height: {{ statusBarHeight }}px;"></view>
+  
+  <!-- 自定义顶部 -->
+  <view class="custom-header">
+    <!-- 社区页面顶部 -->
+    <view wx:if="{{currentTab === 'community'}}" class="location-bar" bindtap="onCommunityTap">
+      <view class="location-info">
+        <t-icon name="location" size="20" color="#FF6B35" />
+        <text class="community-name">{{ currentCommunity }}</text>
+        <t-icon name="chevron-down" size="16" color="#999" />
+      </view>
+    </view>
+    
+    <!-- 发现页面顶部 -->
+    <view wx:if="{{currentTab === 'discover'}}" class="title-bar">
+      <text class="page-title">发现</text>
+      <text class="subtitle">附近30km</text>
+    </view>
+    
+    <!-- 消息页面顶部 -->
+    <view wx:if="{{currentTab === 'messages'}}" class="title-bar">
+      <text class="page-title">消息</text>
+    </view>
+    
+    <!-- 我的页面顶部 -->
+    <view wx:if="{{currentTab === 'profile'}}" class="title-bar">
+      <text class="page-title">我的</text>
+    </view>
+  </view>
+  
+  <!-- 主内容区 -->
+  <scroll-view class="main-content" scroll-y>
+    <!-- 社区动态页 -->
+    <community-tab
+      wx:if="{{currentTab === 'community'}}"
+      searchValue="{{searchValue}}"
+      categories="{{categories}}"
+      posts="{{posts}}"
+      bind:searchchange="onSearchChange"
+      bind:searchsubmit="onSearchSubmit"
+      bind:searchclear="onSearchClear"
+      bind:categorytap="onCategoryTap"
+      bind:posttap="onPostTap"
+      bind:liketap="onLikeTap"
+      bind:commenttap="onCommentTap"
+      bind:contacttap="onContactTap"
+    />
+
+    <!-- 发现页 -->
+    <discover-tab
+      wx:if="{{currentTab === 'discover'}}"
+      searchValue="{{discoverSearchValue}}"
+      activeTab="{{discoverActiveTab}}"
+      currentFilters="{{currentFilters}}"
+      selectedFilters="{{selectedFilters}}"
+      posts="{{discoverPosts}}"
+      bind:searchchange="onDiscoverSearchChange"
+      bind:searchsubmit="onDiscoverSearchSubmit"
+      bind:tabchange="onDiscoverTabChange"
+      bind:filtertap="onFilterTap"
+      bind:resetfilter="onResetFilter"
+      bind:sorttap="onSortTap"
+      bind:posttap="onPostTap"
+      bind:contacttap="onContactTap"
+    />
+
+    <!-- 消息页 -->
+    <view wx:if="{{currentTab === 'messages'}}" class="tab-content">
+      <view class="empty-state">
+        <t-icon name="chat" size="48" color="#ccc" />
+        <text class="empty-text">暂无消息</text>
+      </view>
+    </view>
+
+    <!-- 我的页 -->
+    <view wx:if="{{currentTab === 'profile'}}" class="tab-content">
+      <view class="empty-state">
+        <t-icon name="user" size="48" color="#ccc" />
+        <text class="empty-text">个人中心</text>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 底部导航栏 -->
+  <t-tab-bar value="{{currentTab}}" bindchange="onTabChange" split="{{false}}">
+    <t-tab-bar-item value="community" icon="home">社区</t-tab-bar-item>
+    <t-tab-bar-item value="discover" icon="browse">发现</t-tab-bar-item>
+    <t-tab-bar-item value="publish" icon="add" class="tab-publish">
+      <view class="publish-icon" bindtap="onPublishTap">
+        <t-icon name="add" size="28" color="#fff" />
+      </view>
+    </t-tab-bar-item>
+    <t-tab-bar-item value="messages" icon="mail" badge-props="{{unreadCount > 0 ? {count: unreadCount} : null}}">消息</t-tab-bar-item>
+    <t-tab-bar-item value="profile" icon="user">我的</t-tab-bar-item>
+  </t-tab-bar>
+</view>

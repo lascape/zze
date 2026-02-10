@@ -1,6 +1,0 @@
-# 由于无法直接生成图片，请手动添加图标文件
-# 或者暂时使用 TDesign 的文字图标替代
-
-# 可以使用以下命令生成简单的占位符（需要 ImageMagick）：
-# convert -size 81x81 xc:#666666 community.png
-# convert -size 81x81 xc:#0052D9 community-active.png

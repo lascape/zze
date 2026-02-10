@@ -1,7 +1,0 @@
-{
-  "component": true,
-  "usingComponents": {
-    "system-avatar": "/components/system-avatar/system-avatar",
-    "t-tag": "tdesign-miniprogram/tag/tag"
-  }
-}

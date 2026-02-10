@@ -1,9 +1,0 @@
-{
-  "navigationBarTitleText": "编辑资料",
-  "usingComponents": {
-    "system-avatar": "/components/system-avatar/system-avatar",
-    "t-input": "tdesign-miniprogram/input/input",
-    "t-button": "tdesign-miniprogram/button/button",
-    "t-popup": "tdesign-miniprogram/popup/popup"
-  }
-}

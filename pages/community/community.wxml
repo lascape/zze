@@ -1,38 +1,130 @@
-<view class="community-page">
-  <!-- 社区切换 -->
-  <view class="community-selector" bindtap="onCommunityTap">
-    <text class="community-name">{{currentCommunity.name}}</text>
-    <text class="arrow">›</text>
+<!-- 社区动态页 -->
+<view class="community-tab">
+  <!-- 搜索栏 -->
+  <view class="header-search">
+    <t-search
+      placeholder="搜索动态信息"
+      value="{{ searchValue }}"
+      bind:change="onSearchChange"
+      bind:submit="onSearchSubmit"
+      bind:clear="onSearchClear" />
   </view>
-
-  <!-- 分类宫格 -->
-  <view class="category-grid">
-    <view 
-      wx:for="{{categories}}" 
-      wx:key="id"
-      class="category-item"
-      data-id="{{item.id}}"
-      bindtap="onCategoryTap"
-    >
-      <view class="category-icon">{{item.name}}</view>
-      <text class="category-name">{{item.name}}</text>
+  
+  <!-- Banner卡片 -->
+  <view class="banner-card">
+    <view class="banner-content">
+      <view class="banner-title">社区信息板</view>
+      <view class="banner-subtitle">邻里互助，温暖相伴</view>
+      <view class="banner-btn">立即发布</view>
+    </view>
+    <view class="banner-icon">
+      <t-icon name="notification" size="80" color="#fff" />
     </view>
   </view>
 
-  <!-- 信息流 -->
-  <view class="posts-section">
-    <view class="section-title">社区动态</view>
-    
-    <t-loading wx:if="{{loading}}" theme="circular" size="40rpx" />
-    
-    <view wx:elif="{{posts.length > 0}}" class="posts-list">
-      <info-card 
-        wx:for="{{posts}}" 
-        wx:key="id"
-        post="{{item}}"
-      />
+  <!-- 快捷分类 -->
+  <view class="category-section">
+    <t-grid column="4" border="{{ false }}">
+      <t-grid-item wx:for="{{ categories }}" wx:key="id" data-id="{{ item.id }}" bindtap="onCategoryTap">
+        <view class="category-item">
+          <view class="category-icon" style="background-color: {{ item.bgColor }};">
+            <t-icon name="{{ item.icon }}" size="28" color="{{ item.iconColor }}" />
+          </view>
+          <text class="category-name">{{ item.name }}</text>
+        </view>
+      </t-grid-item>
+    </t-grid>
+  </view>
+
+  <!-- 动态列表 -->
+  <view class="section-header">
+    <text class="section-title">最新动态</text>
+    <view class="section-more">
+      <text>查看更多</text>
+      <t-icon name="chevron-right" size="16" />
     </view>
-    
-    <t-empty wx:else description="暂无动态" />
+  </view>
+
+  <view class="post-list">
+    <view class="post-item" wx:for="{{ posts }}" wx:key="id" data-id="{{ item.id }}" bindtap="onPostTap">
+      <!-- 帖子头部 -->
+      <view class="post-header">
+        <view class="user-info">
+          <view class="avatar">
+            <t-icon name="user" size="24" color="#999" />
+          </view>
+          <view class="user-meta">
+            <text class="username">{{ item.author }}</text>
+            <text class="post-time">{{ item.time }}</text>
+          </view>
+        </view>
+        <t-tag wx:if="{{ item.category }}" theme="primary" variant="light" size="small">{{ item.category }}</t-tag>
+      </view>
+
+      <!-- 帖子内容 -->
+      <view class="post-content">
+        <view class="post-title">{{ item.title }}</view>
+        <view class="post-desc">{{ item.content }}</view>
+        
+        <!-- 图片网格（如果有图片）-->
+        <view wx:if="{{ item.images && item.images.length > 0 }}" class="post-images">
+          <view 
+            class="image-item {{ item.images.length === 1 ? 'single' : '' }}" 
+            wx:for="{{ item.images }}" 
+            wx:for-item="img" 
+            wx:key="*this">
+            <t-image src="{{ img }}" mode="aspectFill" class="post-image" />
+          </view>
+        </view>
+
+        <!-- 详细信息卡片（如果有价格/位置等信息）-->
+        <view wx:if="{{ item.price || item.location }}" class="post-detail-card">
+          <view wx:if="{{ item.price }}" class="detail-price">
+            <text class="price-symbol">¥</text>
+            <text class="price-value">{{ item.price }}</text>
+            <text class="price-unit" wx:if="{{ item.type === 'rental' }}">/月</text>
+          </view>
+          <view wx:if="{{ item.location }}" class="detail-info">
+            <t-icon name="location" size="12" color="#999" />
+            <text>{{ item.location }}</text>
+          </view>
+        </view>
+        <!-- 租房信息 -->
+        <view wx:if="{{ item.type === 'rental' && (item.rentType || item.layout) }}" class="post-meta">
+          <text wx:if="{{ item.rentType }}" class="meta-item">{{ item.rentType }}</text>
+          <text wx:if="{{ item.layout }}" class="meta-item">{{ item.layout }}</text>
+        </view>
+        <!-- 美食信息 -->
+        <view wx:if="{{ item.type === 'food' && (item.foodCategory || item.perCapita) }}" class="post-meta">
+          <text wx:if="{{ item.foodCategory }}" class="meta-item">{{ item.foodCategory }}</text>
+          <text wx:if="{{ item.perCapita }}" class="meta-item">人均¥{{ item.perCapita }}</text>
+        </view>
+        <!-- 二手信息 -->
+        <view wx:if="{{ item.type === 'used' && item.quality }}" class="post-meta">
+          <text class="meta-item">{{ item.quality }}</text>
+        </view>
+        <!-- 服务信息 -->
+        <view wx:if="{{ item.type === 'service' && (item.serviceType || item.refPrice) }}" class="post-meta">
+          <text wx:if="{{ item.serviceType }}" class="meta-item">{{ item.serviceType }}</text>
+          <text wx:if="{{ item.refPrice }}" class="meta-item">{{ item.refPrice }}</text>
+        </view>
+      </view>
+
+      <!-- 操作栏 -->
+      <view class="post-actions">
+        <view class="action-btn" data-id="{{ item.id }}" catchtap="onLikeTap">
+          <t-icon name="{{ item.liked ? 'thumb-up-fill' : 'thumb-up' }}" size="16" color="{{ item.liked ? '#FF6B35' : '#666' }}" />
+          <text>{{ item.likes || 0 }}</text>
+        </view>
+        <view class="action-btn" data-id="{{ item.id }}" catchtap="onCommentTap">
+          <t-icon name="chat" size="16" />
+          <text>{{ item.comments || 0 }}</text>
+        </view>
+        <view wx:if="{{ item.type === 'rental' || item.type === 'used' }}" class="action-btn action-contact" data-id="{{ item.id }}" catchtap="onContactTap">
+          <t-icon name="service" size="16" color="#1677FF" />
+          <text>联系TA</text>
+        </view>
+      </view>
+    </view>
   </view>
 </view>

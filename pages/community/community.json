@@ -1,9 +1,4 @@
 {
-  "navigationBarTitleText": "社区",
-  "enablePullDownRefresh": true,
-  "usingComponents": {
-    "info-card": "/components/info-card/info-card",
-    "t-empty": "tdesign-miniprogram/empty/empty",
-    "t-loading": "tdesign-miniprogram/loading/loading"
-  }
+  "component": true,
+  "usingComponents": {}
 }

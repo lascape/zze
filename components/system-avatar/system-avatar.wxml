@@ -1,8 +1,0 @@
-<view class="system-avatar {{size}}">
-  <image 
-    class="avatar-image" 
-    src="{{avatar || defaultAvatar}}" 
-    mode="aspectFill"
-    binderror="onError"
-  />
-</view>

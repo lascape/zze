@@ -1,0 +1,111 @@
+/* index.wxss */
+page {
+  background-color: #f5f5f5;
+  height: 100%;
+}
+
+.community-page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #f5f5f5;
+}
+
+/* 自定义顶部 */
+.custom-header {
+  background-color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.status-bar {
+  width: 100%;
+  background-color: #fff;
+}
+
+.location-bar {
+  padding: 12px 20px;
+  background-color: #fff;
+}
+
+.location-info {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.community-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: #000;
+}
+
+.title-bar {
+  padding: 12px 20px;
+  background-color: #fff;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.page-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #000;
+}
+
+.subtitle {
+  font-size: 12px;
+  color: #999;
+}
+
+/* 主内容区 */
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: 80px;
+  z-index: 0;
+}
+
+/* Tab内容区 */
+.tab-content {
+  min-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 空状态 */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  gap: 12px;
+}
+
+.empty-text {
+  font-size: 14px;
+  color: #999;
+}
+
+/* 底部TabBar自定义样式 */
+.tab-publish {
+  position: relative;
+}
+
+.publish-icon {
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 56px;
+  height: 56px;
+  border-radius: 28px;
+  background: linear-gradient(135deg, #FF6B35 0%, #FF8C69 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+  border: 4px solid #fff;
+}

@@ -1,0 +1,1556 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>邻里社区 - 本地信息板（原型）</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
+  <style>
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    @keyframes slideUp { from { transform: translateY(100%);} to { transform: translateY(0);} }
+    .animate-slide-up { animation: slideUp .25s ease-out; }
+
+    @keyframes fadeIn { from {opacity:0} to {opacity:1} }
+    .animate-fade-in { animation: fadeIn .18s ease-out; }
+
+    .chip { @apply px-2 py-1 rounded-full text-[10px] font-semibold; }
+    .divider { @apply h-px bg-gray-100; }
+  </style>
+</head>
+
+<body class="bg-slate-100 flex justify-center items-center min-h-screen font-sans">
+  <!-- App Container -->
+  <div class="w-[375px] h-[812px] bg-white border border-gray-200 rounded-[2.5rem] shadow-2xl overflow-hidden relative flex flex-col">
+
+    <!-- Top Header -->
+    <header class="h-[56px] flex items-center justify-between px-5 shrink-0 bg-white/80 backdrop-blur-md z-20 border-b border-gray-50">
+      <button class="flex items-center space-x-2" onclick="openCommunitySheet()">
+        <span class="iconify text-orange-500 text-2xl" data-icon="solar:map-point-bold-duotone"></span>
+        <span id="currentCommunityName" class="font-bold text-gray-800 text-lg">锦绣社区</span>
+        <span class="iconify text-gray-400 text-xl" data-icon="solar:alt-arrow-down-linear"></span>
+      </button>
+
+      <div class="flex items-center space-x-3">
+        <button class="text-gray-500" onclick="openSearch()">
+          <span class="iconify text-2xl" data-icon="solar:magnifer-linear"></span>
+        </button>
+        <button class="text-gray-500" onclick="go('messages')">
+          <span class="iconify text-2xl" data-icon="solar:bell-bing-linear"></span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Pages -->
+    <main class="flex-1 overflow-hidden bg-slate-50 relative">
+
+      <!-- Page: Community Feed -->
+      <section id="page-community" class="absolute inset-0 overflow-y-auto hide-scrollbar pb-28">
+        <!-- Banner -->
+        <div class="px-4 py-3">
+          <div class="w-full h-32 bg-gradient-to-br from-orange-400 to-rose-500 rounded-2xl p-5 text-white flex justify-between items-center shadow-lg shadow-orange-100">
+            <div>
+              <h3 class="text-xl font-bold mb-1">社区信息板</h3>
+              <p class="text-xs opacity-90">租房 · 餐饮 · 二手 · 服务</p>
+              <button class="mt-2 px-4 py-1.5 bg-white/20 backdrop-blur-md rounded-full text-xs font-semibold"
+                      onclick="go('discover')">去发现（附近30km）</button>
+            </div>
+            <div class="w-20 h-20 rounded-2xl bg-white/20 flex items-center justify-center">
+              <span class="iconify text-5xl" data-icon="solar:city-bold-duotone"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Categories -->
+        <div class="grid grid-cols-4 gap-4 px-4 py-4 bg-white">
+          <button class="flex flex-col items-center space-y-2" onclick="goDiscoverWithType('rental')">
+            <div class="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-500">
+              <span class="iconify text-2xl" data-icon="solar:home-smile-angle-bold-duotone"></span>
+            </div>
+            <span class="text-xs text-gray-600">本地租房</span>
+          </button>
+
+          <button class="flex flex-col items-center space-y-2" onclick="goDiscoverWithType('food')">
+            <div class="w-12 h-12 bg-orange-50 rounded-2xl flex items-center justify-center text-orange-500">
+              <span class="iconify text-2xl" data-icon="solar:hamburger-food-bold-duotone"></span>
+            </div>
+            <span class="text-xs text-gray-600">周边美食</span>
+          </button>
+
+          <button class="flex flex-col items-center space-y-2" onclick="goDiscoverWithType('used')">
+            <div class="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-500">
+              <span class="iconify text-2xl" data-icon="solar:cart-large-4-bold-duotone"></span>
+            </div>
+            <span class="text-xs text-gray-600">二手闲置</span>
+          </button>
+
+          <button class="flex flex-col items-center space-y-2" onclick="goDiscoverWithType('service')">
+            <div class="w-12 h-12 bg-purple-50 rounded-2xl flex items-center justify-center text-purple-500">
+              <span class="iconify text-2xl" data-icon="solar:hand-stars-bold-duotone"></span>
+            </div>
+            <span class="text-xs text-gray-600">生活服务</span>
+          </button>
+        </div>
+
+        <!-- Feed -->
+        <div class="mt-2 space-y-3 px-4 pt-4">
+          <div class="flex justify-between items-end mb-3">
+            <h2 class="text-lg font-bold text-gray-800">最新动态</h2>
+            <button class="text-xs text-blue-500 font-medium" onclick="go('discover')">查看更多</button>
+          </div>
+
+          <div id="communityFeedList" class="space-y-3"></div>
+        </div>
+      </section>
+
+      <!-- Page: Discover (Nearby 30km) -->
+      <section id="page-discover" class="hidden absolute inset-0 overflow-y-auto hide-scrollbar pb-28">
+        <div class="px-4 pt-4">
+          <!-- Search -->
+          <button class="w-full bg-white rounded-2xl px-4 py-3 flex items-center space-x-2 shadow-sm"
+                  onclick="openSearch()">
+            <span class="iconify text-gray-400 text-xl" data-icon="solar:magnifer-linear"></span>
+            <span class="text-sm text-gray-400">搜索：租房 / 店名 / 关键词</span>
+          </button>
+
+          <!-- Nearby Range -->
+          <div class="flex items-center justify-between mt-3">
+            <div class="text-xs text-gray-500">
+              范围：<span class="font-semibold text-gray-700">附近30km</span>
+              <span class="text-gray-400">（默认按定位）</span>
+            </div>
+            <button class="text-xs text-blue-500" onclick="mockRelocate()">重新定位</button>
+          </div>
+
+          <!-- Tabs -->
+          <div class="mt-3 flex space-x-2">
+            <button id="tab-rental" class="tabBtn px-3 py-2 rounded-xl text-sm font-semibold bg-white text-gray-600 shadow-sm"
+                    onclick="setDiscoverType('rental')">租房</button>
+            <button id="tab-food" class="tabBtn px-3 py-2 rounded-xl text-sm font-semibold bg-white text-gray-600 shadow-sm"
+                    onclick="setDiscoverType('food')">美食</button>
+            <button id="tab-used" class="tabBtn px-3 py-2 rounded-xl text-sm font-semibold bg-white text-gray-600 shadow-sm"
+                    onclick="setDiscoverType('used')">二手</button>
+            <button id="tab-service" class="tabBtn px-3 py-2 rounded-xl text-sm font-semibold bg-white text-gray-600 shadow-sm"
+                    onclick="setDiscoverType('service')">服务</button>
+          </div>
+
+          <!-- Filters (light) -->
+          <div id="discoverFilters" class="mt-3 bg-white rounded-2xl p-3 shadow-sm"></div>
+
+          <!-- List -->
+          <div class="mt-3 space-y-3" id="discoverList"></div>
+        </div>
+      </section>
+
+      <!-- Page: Messages -->
+      <section id="page-messages" class="hidden absolute inset-0 overflow-y-auto hide-scrollbar pb-28">
+        <div class="px-4 pt-4">
+          <div class="flex items-center justify-between">
+            <h2 class="text-lg font-bold text-gray-800">消息</h2>
+            <button class="text-xs text-blue-500" onclick="openSafetyTips()">沟通规范</button>
+          </div>
+
+          <!-- Segmented -->
+          <div class="mt-3 bg-white rounded-2xl p-1 flex shadow-sm">
+            <button id="msgTabChat" class="flex-1 py-2 rounded-xl text-sm font-semibold bg-orange-500 text-white"
+                    onclick="switchMsgTab('chat')">私信</button>
+            <button id="msgTabNotice" class="flex-1 py-2 rounded-xl text-sm font-semibold text-gray-500"
+                    onclick="switchMsgTab('notice')">通知</button>
+          </div>
+
+          <div id="messagesChat" class="mt-3 space-y-2"></div>
+          <div id="messagesNotice" class="hidden mt-3 space-y-2"></div>
+        </div>
+      </section>
+
+      <!-- Page: Profile -->
+      <section id="page-profile" class="hidden absolute inset-0 overflow-y-auto hide-scrollbar pb-28">
+        <div class="px-4 pt-4">
+          <div class="bg-white rounded-2xl p-4 shadow-sm flex items-center space-x-3">
+            <div class="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center">
+              <span class="iconify text-3xl text-gray-500" data-icon="solar:user-rounded-bold-duotone"></span>
+            </div>
+            <div class="flex-1">
+              <div class="flex items-center space-x-2">
+                <p id="myNickname" class="text-sm font-bold text-gray-800">邻居4821</p>
+                <span class="chip bg-slate-100 text-slate-600">平台昵称</span>
+              </div>
+              <p class="text-[11px] text-gray-500 mt-0.5">当前社区：<span id="myCommunityLabel">锦绣社区</span></p>
+            </div>
+            <button class="text-xs text-blue-500" onclick="openEditNickname()">编辑</button>
+          </div>
+
+          <div class="mt-3 bg-white rounded-2xl shadow-sm overflow-hidden">
+            <button class="w-full px-4 py-4 flex items-center justify-between" onclick="go('my-posts')">
+              <div class="flex items-center space-x-2">
+                <span class="iconify text-xl text-orange-500" data-icon="solar:document-text-bold-duotone"></span>
+                <span class="text-sm font-semibold text-gray-800">我的发布</span>
+              </div>
+              <span class="iconify text-xl text-gray-300" data-icon="solar:alt-arrow-right-linear"></span>
+            </button>
+            <div class="divider"></div>
+            <button class="w-full px-4 py-4 flex items-center justify-between" onclick="go('favorites')">
+              <div class="flex items-center space-x-2">
+                <span class="iconify text-xl text-rose-500" data-icon="solar:heart-bold-duotone"></span>
+                <span class="text-sm font-semibold text-gray-800">我的收藏</span>
+              </div>
+              <span class="iconify text-xl text-gray-300" data-icon="solar:alt-arrow-right-linear"></span>
+            </button>
+            <div class="divider"></div>
+            <button class="w-full px-4 py-4 flex items-center justify-between" onclick="openSafetyTips()">
+              <div class="flex items-center space-x-2">
+                <span class="iconify text-xl text-emerald-500" data-icon="solar:shield-check-bold-duotone"></span>
+                <span class="text-sm font-semibold text-gray-800">发布与沟通规范</span>
+              </div>
+              <span class="iconify text-xl text-gray-300" data-icon="solar:alt-arrow-right-linear"></span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Page: My Posts -->
+      <section id="page-my-posts" class="hidden absolute inset-0 overflow-y-auto hide-scrollbar pb-28">
+        <div class="px-4 pt-4">
+          <div class="flex items-center justify-between">
+            <button class="text-gray-500 flex items-center space-x-1" onclick="go('profile')">
+              <span class="iconify text-xl" data-icon="solar:alt-arrow-left-linear"></span>
+              <span class="text-sm">返回</span>
+            </button>
+            <h2 class="text-sm font-bold text-gray-800">我的发布</h2>
+            <div class="w-10"></div>
+          </div>
+
+          <div class="mt-3 bg-white rounded-2xl p-1 flex shadow-sm">
+            <button id="postTabAll" class="flex-1 py-2 rounded-xl text-xs font-semibold bg-orange-500 text-white" onclick="setMyPostFilter('all')">全部</button>
+            <button id="postTabPending" class="flex-1 py-2 rounded-xl text-xs font-semibold text-gray-500" onclick="setMyPostFilter('pending')">审核中</button>
+            <button id="postTabPublished" class="flex-1 py-2 rounded-xl text-xs font-semibold text-gray-500" onclick="setMyPostFilter('published')">已发布</button>
+            <button id="postTabRejected" class="flex-1 py-2 rounded-xl text-xs font-semibold text-gray-500" onclick="setMyPostFilter('rejected')">被驳回</button>
+          </div>
+
+          <div id="myPostsList" class="mt-3 space-y-3"></div>
+        </div>
+      </section>
+
+      <!-- Page: Favorites -->
+      <section id="page-favorites" class="hidden absolute inset-0 overflow-y-auto hide-scrollbar pb-28">
+        <div class="px-4 pt-4">
+          <div class="flex items-center justify-between">
+            <button class="text-gray-500 flex items-center space-x-1" onclick="go('profile')">
+              <span class="iconify text-xl" data-icon="solar:alt-arrow-left-linear"></span>
+              <span class="text-sm">返回</span>
+            </button>
+            <h2 class="text-sm font-bold text-gray-800">我的收藏</h2>
+            <div class="w-10"></div>
+          </div>
+
+          <div id="favoritesList" class="mt-3 space-y-3"></div>
+        </div>
+      </section>
+
+      <!-- Page: Post Detail -->
+      <section id="page-detail" class="hidden absolute inset-0 overflow-y-auto hide-scrollbar pb-36">
+        <div class="px-4 pt-4">
+          <div class="flex items-center justify-between">
+            <button class="text-gray-500 flex items-center space-x-1" onclick="backFromDetail()">
+              <span class="iconify text-xl" data-icon="solar:alt-arrow-left-linear"></span>
+              <span class="text-sm">返回</span>
+            </button>
+            <h2 class="text-sm font-bold text-gray-800">详情</h2>
+            <button class="text-gray-500" onclick="openMoreActions()">
+              <span class="iconify text-2xl" data-icon="solar:menu-dots-bold"></span>
+            </button>
+          </div>
+
+          <div id="detailBody" class="mt-3"></div>
+        </div>
+
+        <!-- Detail bottom bar -->
+        <div class="absolute left-0 right-0 bottom-[80px] px-4">
+          <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-3 flex items-center space-x-3">
+            <button class="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center"
+                    onclick="toggleFavorite(currentDetailId)">
+              <span class="iconify text-2xl text-rose-500" data-icon="solar:heart-bold"></span>
+            </button>
+            <button class="flex-1 h-12 bg-gradient-to-tr from-orange-400 to-orange-500 rounded-2xl text-white font-semibold shadow-lg shadow-orange-200"
+                    onclick="startChatWithAuthor(currentDetailId)">
+              私信TA
+            </button>
+          </div>
+          <p class="text-[10px] text-gray-400 mt-2 text-center">仅站内私信沟通；禁止发送微信/电话/外链。</p>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="h-[80px] bg-white border-t border-gray-100 flex items-center justify-around px-2 pb-2 shrink-0 z-30">
+      <button id="nav-community" class="navBtn flex flex-col items-center justify-center space-y-1 text-orange-500" onclick="go('community')">
+        <span class="iconify text-2xl" data-icon="solar:home-2-bold"></span>
+        <span class="text-[10px] font-medium">社区</span>
+      </button>
+
+      <button id="nav-discover" class="navBtn flex flex-col items-center justify-center space-y-1 text-gray-400" onclick="go('discover')">
+        <span class="iconify text-2xl" data-icon="solar:compass-linear"></span>
+        <span class="text-[10px] font-medium">发现</span>
+      </button>
+
+      <div class="relative -top-4">
+        <button class="w-14 h-14 bg-gradient-to-tr from-orange-400 to-orange-500 rounded-full flex items-center justify-center text-white shadow-lg shadow-orange-200 ring-4 ring-white"
+                onclick="openPostModal()">
+          <span class="iconify text-3xl" data-icon="solar:add-bold"></span>
+        </button>
+      </div>
+
+      <button id="nav-messages" class="navBtn flex flex-col items-center justify-center space-y-1 text-gray-400" onclick="go('messages')">
+        <span class="iconify text-2xl" data-icon="solar:chat-unread-linear"></span>
+        <span class="text-[10px] font-medium">消息</span>
+      </button>
+
+      <button id="nav-profile" class="navBtn flex flex-col items-center justify-center space-y-1 text-gray-400" onclick="go('profile')">
+        <span class="iconify text-2xl" data-icon="solar:user-linear"></span>
+        <span class="text-[10px] font-medium">我的</span>
+      </button>
+    </nav>
+
+    <!-- Modal: Post Type -->
+    <div id="postModal" class="hidden absolute inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-end">
+      <div class="w-full bg-white rounded-t-[2.5rem] p-6 animate-slide-up">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-xl font-bold text-gray-800">发布信息</h3>
+          <button class="text-gray-400" onclick="closePostModal()">
+            <span class="iconify text-2xl" data-icon="solar:close-circle-linear"></span>
+          </button>
+        </div>
+
+        <div class="text-[11px] text-gray-500 bg-slate-50 rounded-2xl p-3 mb-4 leading-relaxed">
+          禁止中介、禁止留微信/电话/外链/二维码。仅站内私信沟通；违规将驳回或下架。
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <button class="bg-blue-50 rounded-2xl p-4 flex items-center space-x-3"
+                  onclick="openPostForm('rental')">
+            <div class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-blue-500">
+              <span class="iconify text-2xl" data-icon="solar:home-smile-angle-bold-duotone"></span>
+            </div>
+            <div class="text-left">
+              <p class="text-sm font-bold text-gray-800">发布租房</p>
+              <p class="text-[11px] text-gray-500">转租/合租/整租</p>
+            </div>
+          </button>
+
+          <button class="bg-orange-50 rounded-2xl p-4 flex items-center space-x-3"
+                  onclick="openPostForm('food')">
+            <div class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-orange-500">
+              <span class="iconify text-2xl" data-icon="solar:hamburger-food-bold-duotone"></span>
+            </div>
+            <div class="text-left">
+              <p class="text-sm font-bold text-gray-800">发布美食</p>
+              <p class="text-[11px] text-gray-500">推荐/优惠</p>
+            </div>
+          </button>
+
+          <button class="bg-emerald-50 rounded-2xl p-4 flex items-center space-x-3"
+                  onclick="openPostForm('used')">
+            <div class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-emerald-500">
+              <span class="iconify text-2xl" data-icon="solar:cart-large-4-bold-duotone"></span>
+            </div>
+            <div class="text-left">
+              <p class="text-sm font-bold text-gray-800">发布二手</p>
+              <p class="text-[11px] text-gray-500">闲置转让</p>
+            </div>
+          </button>
+
+          <button class="bg-purple-50 rounded-2xl p-4 flex items-center space-x-3"
+                  onclick="openPostForm('service')">
+            <div class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-purple-500">
+              <span class="iconify text-2xl" data-icon="solar:hand-stars-bold-duotone"></span>
+            </div>
+            <div class="text-left">
+              <p class="text-sm font-bold text-gray-800">发布服务</p>
+              <p class="text-[11px] text-gray-500">保洁/维修等</p>
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sheet: Community Switch -->
+    <div id="communitySheet" class="hidden absolute inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-end">
+      <div class="w-full bg-white rounded-t-[2.5rem] p-6 animate-slide-up">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-xl font-bold text-gray-800">选择社区</h3>
+          <button class="text-gray-400" onclick="closeCommunitySheet()">
+            <span class="iconify text-2xl" data-icon="solar:close-circle-linear"></span>
+          </button>
+        </div>
+
+        <div class="bg-slate-50 rounded-2xl p-3 flex items-center space-x-2">
+          <span class="iconify text-gray-400 text-xl" data-icon="solar:magnifer-linear"></span>
+          <input id="communitySearch" class="bg-transparent flex-1 outline-none text-sm"
+                 placeholder="搜索社区名称" oninput="renderCommunityList()" />
+        </div>
+
+        <p class="text-[11px] text-gray-500 mt-3">建议：可收藏常用社区，内容按当前社区展示。</p>
+
+        <div id="communityList" class="mt-3 space-y-2 max-h-[380px] overflow-y-auto hide-scrollbar"></div>
+      </div>
+    </div>
+
+    <!-- Modal: Post Form -->
+    <div id="postFormModal" class="hidden absolute inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-end">
+      <div class="w-full max-h-[92%] bg-white rounded-t-[2.5rem] p-6 animate-slide-up overflow-y-auto hide-scrollbar">
+        <div class="flex justify-between items-center mb-2">
+          <h3 id="postFormTitle" class="text-xl font-bold text-gray-800">发布</h3>
+          <button class="text-gray-400" onclick="closePostForm()">
+            <span class="iconify text-2xl" data-icon="solar:close-circle-linear"></span>
+          </button>
+        </div>
+
+        <div class="text-[11px] text-gray-500 bg-slate-50 rounded-2xl p-3 mb-4 leading-relaxed">
+          提交后进入审核；通过后才会展示。禁止中介与任何联系方式（微信/电话/外链/二维码）。
+        </div>
+
+        <div id="postFormFields" class="space-y-3"></div>
+
+        <button class="mt-5 w-full h-12 bg-gradient-to-tr from-orange-400 to-orange-500 rounded-2xl text-white font-semibold shadow-lg shadow-orange-200"
+                onclick="submitPost()">
+          提交审核
+        </button>
+
+        <button class="mt-3 w-full h-12 bg-slate-100 rounded-2xl text-gray-700 font-semibold"
+                onclick="saveDraftAndClose()">
+          保存草稿并退出
+        </button>
+      </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="hidden absolute top-16 left-0 right-0 z-[60] flex justify-center animate-fade-in">
+      <div class="bg-gray-900 text-white text-xs px-4 py-2 rounded-full shadow-lg">提示</div>
+    </div>
+
+  </div>
+
+<script>
+  /***********************
+   * Mock Data & State
+   ***********************/
+  const state = {
+    currentPage: 'community',
+    previousPage: 'community',
+    currentCommunityId: 'jx',
+    currentCommunityName: '锦绣社区',
+    discoverType: 'rental',
+    myNickname: '邻居4821',
+    myPostFilter: 'all',
+    favorites: new Set(),
+    chats: [],      // {id, peerName, lastMsg, unread}
+    notices: [],    // {id, title, time, type}
+    posts: [],      // all posts (published)
+    myPosts: [],    // my posts (pending/published/rejected)
+    draft: null,
+  };
+
+  const communities = [
+    { id:'jx', name:'锦绣社区', area:'东城区', starred:true },
+    { id:'hx', name:'海棠花园', area:'南城区', starred:false },
+    { id:'yl', name:'云澜小区', area:'西城区', starred:false },
+    { id:'ms', name:'明胜里', area:'北城区', starred:false },
+    { id:'gx', name:'观澜新城', area:'东城区', starred:false },
+  ];
+
+  // Seed sample feed posts (published)
+  const seedPosts = [
+    {
+      id:'p1', type:'rental',
+      authorName:'邻居1267', time:'2小时前', communityName:'锦绣社区', area:'东区',
+      title:'【转租】精装两居室，采光好，近公交',
+      desc:'工作变动急转，家电齐全，随时可看房。仅站内私信沟通。',
+      price:3500, rentType:'整租', layout:'两室一厅',
+      images:2
+    },
+    {
+      id:'p2', type:'used',
+      authorName:'邻居3902', time:'昨天', communityName:'锦绣社区', area:'西区',
+      title:'9成新婴儿推车，轻便可折叠',
+      desc:'买来用过几次，小区自提，欢迎私信。',
+      price:280, quality:'9成新',
+      images:3
+    },
+    {
+      id:'p3', type:'food',
+      authorName:'邻居7701', time:'3天前', communityName:'海棠花园', area:'北门',
+      title:'小区门口新开的拉面店，性价比很高',
+      desc:'汤底很香，人均25左右，晚高峰要排队。',
+      perCapita:25, category:'面食',
+      images:1
+    },
+    {
+      id:'p4', type:'service',
+      authorName:'邻居2150', time:'1周前', communityName:'锦绣社区', area:'东区',
+      title:'上门家电清洗（空调/油烟机）',
+      desc:'预约上门，按台收费，具体看型号。仅站内沟通。',
+      serviceType:'家电清洗', refPrice:'¥99起',
+      images:0
+    },
+  ];
+
+  state.posts = seedPosts.filter(p => p.communityName === state.currentCommunityName);
+
+  /***********************
+   * Utilities
+   ***********************/
+  function toast(msg) {
+    const t = document.getElementById('toast');
+    t.querySelector('div').innerText = msg;
+    t.classList.remove('hidden');
+    setTimeout(()=>t.classList.add('hidden'), 1400);
+  }
+
+  function typeLabel(type) {
+    if (type==='rental') return { text:'租房', cls:'bg-blue-50 text-blue-600' };
+    if (type==='food') return { text:'美食', cls:'bg-orange-50 text-orange-600' };
+    if (type==='used') return { text:'二手', cls:'bg-emerald-50 text-emerald-600' };
+    if (type==='service') return { text:'服务', cls:'bg-purple-50 text-purple-600' };
+    return { text:'信息', cls:'bg-slate-50 text-slate-600' };
+  }
+
+  function renderSystemAvatar(seed) {
+    // deterministic-ish color
+    const colors = ['bg-slate-100','bg-blue-50','bg-emerald-50','bg-orange-50','bg-purple-50','bg-rose-50'];
+    const c = colors[Math.abs(hashCode(seed)) % colors.length];
+    return `
+      <div class="w-10 h-10 rounded-2xl ${c} flex items-center justify-center">
+        <span class="iconify text-2xl text-gray-500" data-icon="solar:user-rounded-bold-duotone"></span>
+      </div>`;
+  }
+
+  function hashCode(str) {
+    let h=0; for (let i=0;i<str.length;i++) h = (h<<5)-h + str.charCodeAt(i) | 0;
+    return h;
+  }
+
+  function showPage(pageId) {
+    const pages = ['community','discover','messages','profile','my-posts','favorites','detail'];
+    pages.forEach(p => {
+      const el = document.getElementById(`page-${p}`);
+      if (!el) return;
+      el.classList.toggle('hidden', p !== pageId);
+    });
+
+    // bottom nav active
+    const navIds = ['community','discover','messages','profile'];
+    navIds.forEach(n => {
+      const btn = document.getElementById(`nav-${n}`);
+      if (!btn) return;
+      btn.classList.toggle('text-orange-500', n === pageId);
+      btn.classList.toggle('text-gray-400', n !== pageId);
+    });
+
+    state.currentPage = pageId;
+
+    if (pageId==='community') renderCommunityFeed();
+    if (pageId==='discover') renderDiscover();
+    if (pageId==='messages') renderMessages();
+    if (pageId==='profile') renderProfile();
+    if (pageId==='my-posts') renderMyPosts();
+    if (pageId==='favorites') renderFavorites();
+  }
+
+  function go(pageId) {
+    state.previousPage = state.currentPage;
+    showPage(pageId);
+  }
+
+  /***********************
+   * Community Switch
+   ***********************/
+  function openCommunitySheet() {
+    document.getElementById('communitySheet').classList.remove('hidden');
+    document.getElementById('communitySearch').value = '';
+    renderCommunityList();
+  }
+  function closeCommunitySheet() {
+    document.getElementById('communitySheet').classList.add('hidden');
+  }
+  function renderCommunityList() {
+    const kw = document.getElementById('communitySearch').value.trim();
+    const list = document.getElementById('communityList');
+
+    const filtered = communities
+      .filter(c => !kw || c.name.includes(kw))
+      .sort((a,b)=> (b.starred===a.starred?0:(b.starred?1:-1)));
+
+    list.innerHTML = filtered.map(c => `
+      <button class="w-full bg-slate-50 rounded-2xl p-4 flex items-center justify-between"
+              onclick="switchCommunity('${c.id}')">
+        <div class="text-left">
+          <div class="flex items-center space-x-2">
+            <p class="text-sm font-bold text-gray-800">${c.name}</p>
+            ${c.starred ? `<span class="chip bg-yellow-50 text-yellow-700">常用</span>` : ``}
+            ${c.id===state.currentCommunityId ? `<span class="chip bg-white text-orange-600 border border-orange-100">当前</span>` : ``}
+          </div>
+          <p class="text-[11px] text-gray-500 mt-1">${c.area} · 内容按社区展示</p>
+        </div>
+        <span class="iconify text-xl text-gray-300" data-icon="solar:alt-arrow-right-linear"></span>
+      </button>
+    `).join('');
+  }
+
+  function switchCommunity(id) {
+    const c = communities.find(x=>x.id===id);
+    if (!c) return;
+    state.currentCommunityId = c.id;
+    state.currentCommunityName = c.name;
+
+    document.getElementById('currentCommunityName').innerText = c.name;
+    document.getElementById('myCommunityLabel').innerText = c.name;
+
+    // update feed posts (mock: filter seed)
+    state.posts = seedPosts.filter(p => p.communityName === state.currentCommunityName);
+
+    closeCommunitySheet();
+    toast(`已切换到：${c.name}`);
+    renderCommunityFeed();
+    if (state.currentPage==='discover') renderDiscover();
+  }
+
+  /***********************
+   * Community Feed
+   ***********************/
+  function postCard(post, context='feed') {
+    const t = typeLabel(post.type);
+    const fav = state.favorites.has(post.id);
+
+    const metaLine = `${post.time} · ${post.communityName}${post.area?`（${post.area}）`:''}`;
+    const extraLine = post.type==='rental'
+      ? `<div class="flex items-center justify-between bg-slate-50 p-2 rounded-xl mt-2">
+           <span class="text-rose-500 font-bold text-sm">¥ ${post.price}/月</span>
+           <span class="text-[10px] text-gray-500 flex items-center">
+             <span class="iconify mr-1" data-icon="solar:case-linear"></span>${post.rentType} · ${post.layout}
+           </span>
+         </div>`
+      : post.type==='used'
+      ? `<div class="flex items-center justify-between bg-slate-50 p-2 rounded-xl mt-2">
+           <span class="text-rose-500 font-bold text-sm">¥ ${post.price}</span>
+           <span class="text-[10px] text-gray-500">${post.quality || '成色未知'}</span>
+         </div>`
+      : post.type==='food'
+      ? `<div class="flex items-center justify-between bg-slate-50 p-2 rounded-xl mt-2">
+           <span class="text-[11px] font-semibold text-gray-700">${post.category || '餐饮'}</span>
+           <span class="text-[10px] text-gray-500">人均 ¥${post.perCapita || '--'}</span>
+         </div>`
+      : post.type==='service'
+      ? `<div class="flex items-center justify-between bg-slate-50 p-2 rounded-xl mt-2">
+           <span class="text-[11px] font-semibold text-gray-700">${post.serviceType || '服务'}</span>
+           <span class="text-[10px] text-gray-500">${post.refPrice || '价格私信咨询'}</span>
+         </div>`
+      : '';
+
+    const imagesBlock = post.images && post.images>0
+      ? `<div class="grid grid-cols-2 gap-2 mt-2">
+           ${Array.from({length: Math.min(post.images, 4)}).map(()=>`
+             <div class="rounded-xl w-full h-28 bg-slate-100 flex items-center justify-center">
+               <span class="iconify text-3xl text-gray-300" data-icon="solar:gallery-linear"></span>
+             </div>
+           `).join('')}
+         </div>`
+      : '';
+
+    return `
+      <div class="bg-white p-4 rounded-2xl shadow-sm space-y-2">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+            ${renderSystemAvatar(post.authorName)}
+            <div>
+              <p class="text-sm font-bold text-gray-800">${post.authorName}</p>
+              <p class="text-[10px] text-gray-400">${metaLine}</p>
+            </div>
+          </div>
+          <span class="chip ${t.cls}">${t.text}</span>
+        </div>
+
+        <button class="w-full text-left" onclick="openDetail('${post.id}')">
+          <p class="text-sm text-gray-800 font-semibold">${post.title}</p>
+          <p class="text-sm text-gray-600 leading-relaxed mt-1 line-clamp-2">${post.desc}</p>
+          ${extraLine}
+          ${imagesBlock}
+        </button>
+
+        <div class="flex items-center justify-between pt-2 border-t border-gray-50">
+          <button class="flex items-center space-x-1.5 text-xs ${fav?'text-rose-500':'text-gray-400'}"
+                  onclick="toggleFavorite('${post.id}')">
+            <span class="iconify" data-icon="${fav?'solar:heart-bold':'solar:heart-linear'}"></span>
+            <span>${fav?'已收藏':'收藏'}</span>
+          </button>
+
+          <button class="text-xs text-blue-500 font-semibold" onclick="openDetail('${post.id}')">
+            查看详情
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderCommunityFeed() {
+    const list = document.getElementById('communityFeedList');
+    const posts = state.posts;
+
+    if (!posts.length) {
+      list.innerHTML = `
+        <div class="bg-white rounded-2xl p-6 shadow-sm text-center">
+          <div class="w-14 h-14 mx-auto rounded-2xl bg-slate-100 flex items-center justify-center">
+            <span class="iconify text-3xl text-gray-400" data-icon="solar:inbox-linear"></span>
+          </div>
+          <p class="mt-3 text-sm font-semibold text-gray-800">当前社区暂无内容</p>
+          <p class="mt-1 text-xs text-gray-500">你可以先去发现页查看附近30km，或发布第一条信息。</p>
+          <button class="mt-4 px-4 py-2 rounded-xl bg-orange-500 text-white text-sm font-semibold" onclick="openPostModal()">去发布</button>
+        </div>
+      `;
+      return;
+    }
+
+    list.innerHTML = posts.map(p => postCard(p)).join('');
+  }
+
+  /***********************
+   * Discover
+   ***********************/
+  function goDiscoverWithType(type) {
+    go('discover');
+    setDiscoverType(type);
+  }
+
+  function setDiscoverType(type) {
+    state.discoverType = type;
+
+    // tabs
+    ['rental','food','used','service'].forEach(t => {
+      const el = document.getElementById(`tab-${t}`);
+      const active = t === type;
+      el.classList.toggle('bg-orange-500', active);
+      el.classList.toggle('text-white', active);
+      el.classList.toggle('bg-white', !active);
+      el.classList.toggle('text-gray-600', !active);
+    });
+
+    renderDiscoverFilters();
+    renderDiscoverList();
+  }
+
+  function renderDiscover() {
+    setDiscoverType(state.discoverType);
+  }
+
+  function renderDiscoverFilters() {
+    const wrap = document.getElementById('discoverFilters');
+
+    let html = '';
+    if (state.discoverType==='rental') {
+      html = `
+        <div class="flex items-center justify-between">
+          <p class="text-sm font-bold text-gray-800">筛选</p>
+          <button class="text-xs text-gray-400" onclick="toast('已重置（示意）')">重置</button>
+        </div>
+        <div class="mt-2 flex flex-wrap gap-2">
+          <span class="chip bg-slate-100 text-slate-600">整租</span>
+          <span class="chip bg-slate-100 text-slate-600">合租</span>
+          <span class="chip bg-slate-100 text-slate-600">¥0-2000</span>
+          <span class="chip bg-slate-100 text-slate-600">¥2000-4000</span>
+          <span class="chip bg-slate-100 text-slate-600">一居</span>
+          <span class="chip bg-slate-100 text-slate-600">两居</span>
+          <span class="chip bg-slate-100 text-slate-600">三居+</span>
+        </div>
+        <p class="text-[10px] text-gray-400 mt-2">MVP为轻筛选；后续可做更精细的条件组合。</p>
+      `;
+    } else if (state.discoverType==='food') {
+      html = `
+        <div class="flex items-center justify-between">
+          <p class="text-sm font-bold text-gray-800">筛选</p>
+          <button class="text-xs text-gray-400" onclick="toast('已重置（示意）')">重置</button>
+        </div>
+        <div class="mt-2 flex flex-wrap gap-2">
+          <span class="chip bg-slate-100 text-slate-600">火锅</span>
+          <span class="chip bg-slate-100 text-slate-600">烧烤</span>
+          <span class="chip bg-slate-100 text-slate-600">快餐</span>
+          <span class="chip bg-slate-100 text-slate-600">咖啡</span>
+          <span class="chip bg-slate-100 text-slate-600">人均≤30</span>
+          <span class="chip bg-slate-100 text-slate-600">有优惠</span>
+        </div>
+      `;
+    } else if (state.discoverType==='used') {
+      html = `
+        <div class="flex items-center justify-between">
+          <p class="text-sm font-bold text-gray-800">筛选</p>
+          <button class="text-xs text-gray-400" onclick="toast('已重置（示意）')">重置</button>
+        </div>
+        <div class="mt-2 flex flex-wrap gap-2">
+          <span class="chip bg-slate-100 text-slate-600">¥0-200</span>
+          <span class="chip bg-slate-100 text-slate-600">¥200-500</span>
+          <span class="chip bg-slate-100 text-slate-600">¥500+</span>
+          <span class="chip bg-slate-100 text-slate-600">全新</span>
+          <span class="chip bg-slate-100 text-slate-600">95新+</span>
+          <span class="chip bg-slate-100 text-slate-600">8新</span>
+        </div>
+      `;
+    } else {
+      html = `
+        <div class="flex items-center justify-between">
+          <p class="text-sm font-bold text-gray-800">筛选</p>
+          <button class="text-xs text-gray-400" onclick="toast('已重置（示意）')">重置</button>
+        </div>
+        <div class="mt-2 flex flex-wrap gap-2">
+          <span class="chip bg-slate-100 text-slate-600">保洁</span>
+          <span class="chip bg-slate-100 text-slate-600">维修</span>
+          <span class="chip bg-slate-100 text-slate-600">搬家</span>
+          <span class="chip bg-slate-100 text-slate-600">跑腿</span>
+          <span class="chip bg-slate-100 text-slate-600">可上门</span>
+        </div>
+      `;
+    }
+
+    wrap.innerHTML = html;
+  }
+
+  function renderDiscoverList() {
+    const list = document.getElementById('discoverList');
+
+    // Discover shows nearby 30km: in mock, show all seed posts (not only current community)
+    const posts = seedPosts.filter(p => p.type === state.discoverType);
+
+    if (!posts.length) {
+      list.innerHTML = `
+        <div class="bg-white rounded-2xl p-6 shadow-sm text-center">
+          <div class="w-14 h-14 mx-auto rounded-2xl bg-slate-100 flex items-center justify-center">
+            <span class="iconify text-3xl text-gray-400" data-icon="solar:inbox-linear"></span>
+          </div>
+          <p class="mt-3 text-sm font-semibold text-gray-800">附近暂无内容</p>
+          <p class="mt-1 text-xs text-gray-500">换个分类，或先发布一条信息。</p>
+          <button class="mt-4 px-4 py-2 rounded-xl bg-orange-500 text-white text-sm font-semibold" onclick="openPostModal()">去发布</button>
+        </div>
+      `;
+      return;
+    }
+
+    list.innerHTML = posts.map(p => postCard(p,'discover')).join('');
+  }
+
+  function mockRelocate() {
+    toast('已重新定位（示意：范围30km）');
+  }
+
+  /***********************
+   * Detail
+   ***********************/
+  let currentDetailId = null;
+
+  function findPostById(id) {
+    return seedPosts.find(p=>p.id===id) || state.posts.find(p=>p.id===id) || state.myPosts.find(p=>p.id===id);
+  }
+
+  function openDetail(id) {
+    currentDetailId = id;
+    const p = findPostById(id);
+    if (!p) return;
+
+    go('detail');
+
+    const t = typeLabel(p.type);
+    const fav = state.favorites.has(p.id);
+
+    const paramBlock = (() => {
+      if (p.type==='rental') return `
+        <div class="bg-slate-50 rounded-2xl p-3">
+          <div class="flex items-center justify-between">
+            <p class="text-rose-500 font-bold text-lg">¥ ${p.price}/月</p>
+            <span class="chip bg-blue-50 text-blue-600">${p.rentType} · ${p.layout}</span>
+          </div>
+          <p class="text-[11px] text-gray-500 mt-2">说明：不提供电话/微信，仅站内私信沟通。</p>
+        </div>`;
+      if (p.type==='used') return `
+        <div class="bg-slate-50 rounded-2xl p-3">
+          <div class="flex items-center justify-between">
+            <p class="text-rose-500 font-bold text-lg">¥ ${p.price}</p>
+            <span class="chip bg-emerald-50 text-emerald-600">${p.quality || '成色未知'}</span>
+          </div>
+          <p class="text-[11px] text-gray-500 mt-2">交易方式：自提/面交（以私信约定为准）。</p>
+        </div>`;
+      if (p.type==='food') return `
+        <div class="bg-slate-50 rounded-2xl p-3">
+          <div class="flex items-center justify-between">
+            <p class="text-gray-800 font-bold text-sm">${p.category || '餐饮'}</p>
+            <span class="chip bg-orange-50 text-orange-600">人均 ¥${p.perCapita || '--'}</span>
+          </div>
+          <p class="text-[11px] text-gray-500 mt-2">提示：本功能为邻里分享，不提供商家外链。</p>
+        </div>`;
+      if (p.type==='service') return `
+        <div class="bg-slate-50 rounded-2xl p-3">
+          <div class="flex items-center justify-between">
+            <p class="text-gray-800 font-bold text-sm">${p.serviceType || '生活服务'}</p>
+            <span class="chip bg-purple-50 text-purple-600">${p.refPrice || '价格私信咨询'}</span>
+          </div>
+          <p class="text-[11px] text-gray-500 mt-2">预约方式：站内私信沟通时间与费用。</p>
+        </div>`;
+      return '';
+    })();
+
+    const imagesBlock = p.images && p.images>0
+      ? `<div class="grid grid-cols-2 gap-2">
+          ${Array.from({length: Math.min(p.images, 6)}).map(()=>`
+            <div class="rounded-2xl w-full h-36 bg-slate-100 flex items-center justify-center">
+              <span class="iconify text-4xl text-gray-300" data-icon="solar:gallery-linear"></span>
+            </div>
+          `).join('')}
+        </div>`
+      : `<div class="rounded-2xl bg-slate-50 p-4 text-center text-xs text-gray-500">暂无图片</div>`;
+
+    document.getElementById('detailBody').innerHTML = `
+      <div class="bg-white rounded-2xl p-4 shadow-sm">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+            ${renderSystemAvatar(p.authorName)}
+            <div>
+              <p class="text-sm font-bold text-gray-800">${p.authorName}</p>
+              <p class="text-[10px] text-gray-400">${p.time} · ${p.communityName}${p.area?`（${p.area}）`:''}</p>
+            </div>
+          </div>
+          <span class="chip ${t.cls}">${t.text}</span>
+        </div>
+
+        <h1 class="mt-3 text-base font-extrabold text-gray-900">${p.title}</h1>
+        <p class="mt-2 text-sm text-gray-600 leading-relaxed">${p.desc}</p>
+
+        <div class="mt-3">${paramBlock}</div>
+
+        <div class="mt-3">${imagesBlock}</div>
+
+        <div class="mt-4 bg-slate-50 rounded-2xl p-3">
+          <p class="text-xs font-bold text-gray-800">安全提示</p>
+          <p class="text-[11px] text-gray-500 mt-1 leading-relaxed">
+            平台仅支持站内私信；请勿索要或发送微信/电话/外链。发现中介/广告可举报。
+          </p>
+        </div>
+      </div>
+    `;
+  }
+
+  function backFromDetail() {
+    go(state.previousPage || 'community');
+  }
+
+  function openMoreActions() {
+    toast('更多操作：举报/拉黑（示意）');
+  }
+
+  /***********************
+   * Favorites
+   ***********************/
+  function toggleFavorite(id) {
+    if (!id) return;
+    if (state.favorites.has(id)) {
+      state.favorites.delete(id);
+      toast('已取消收藏');
+    } else {
+      state.favorites.add(id);
+      toast('已收藏');
+    }
+    // rerender pages that show favorite state
+    if (state.currentPage==='community') renderCommunityFeed();
+    if (state.currentPage==='discover') renderDiscoverList();
+    if (state.currentPage==='favorites') renderFavorites();
+  }
+
+  function renderFavorites() {
+    const list = document.getElementById('favoritesList');
+    const favPosts = seedPosts.filter(p => state.favorites.has(p.id));
+    if (!favPosts.length) {
+      list.innerHTML = `
+        <div class="bg-white rounded-2xl p-6 shadow-sm text-center">
+          <div class="w-14 h-14 mx-auto rounded-2xl bg-slate-100 flex items-center justify-center">
+            <span class="iconify text-3xl text-gray-400" data-icon="solar:heart-linear"></span>
+          </div>
+          <p class="mt-3 text-sm font-semibold text-gray-800">还没有收藏</p>
+          <p class="mt-1 text-xs text-gray-500">在详情页点“收藏”，方便下次快速找到。</p>
+          <button class="mt-4 px-4 py-2 rounded-xl bg-orange-500 text-white text-sm font-semibold" onclick="go('discover')">去发现</button>
+        </div>
+      `;
+      return;
+    }
+    list.innerHTML = favPosts.map(p => postCard(p,'favorites')).join('');
+  }
+
+  /***********************
+   * Messages (Chat + Notices)
+   ***********************/
+  function switchMsgTab(tab) {
+    const chatBtn = document.getElementById('msgTabChat');
+    const noticeBtn = document.getElementById('msgTabNotice');
+    const chat = document.getElementById('messagesChat');
+    const notice = document.getElementById('messagesNotice');
+
+    const isChat = tab==='chat';
+    chatBtn.classList.toggle('bg-orange-500', isChat);
+    chatBtn.classList.toggle('text-white', isChat);
+    chatBtn.classList.toggle('text-gray-500', !isChat);
+
+    noticeBtn.classList.toggle('bg-orange-500', !isChat);
+    noticeBtn.classList.toggle('text-white', !isChat);
+    noticeBtn.classList.toggle('text-gray-500', isChat);
+
+    chat.classList.toggle('hidden', !isChat);
+    notice.classList.toggle('hidden', isChat);
+  }
+
+  function renderMessages() {
+    const chatWrap = document.getElementById('messagesChat');
+    const noticeWrap = document.getElementById('messagesNotice');
+
+    // chats
+    if (!state.chats.length) {
+      chatWrap.innerHTML = `
+        <div class="bg-white rounded-2xl p-6 shadow-sm text-center">
+          <div class="w-14 h-14 mx-auto rounded-2xl bg-slate-100 flex items-center justify-center">
+            <span class="iconify text-3xl text-gray-400" data-icon="solar:chat-round-dots-linear"></span>
+          </div>
+          <p class="mt-3 text-sm font-semibold text-gray-800">暂无私信</p>
+          <p class="mt-1 text-xs text-gray-500">在详情页点击“私信TA”即可开始沟通。</p>
+        </div>
+      `;
+    } else {
+      chatWrap.innerHTML = state.chats.map(c => `
+        <button class="w-full bg-white rounded-2xl p-4 shadow-sm flex items-center justify-between"
+                onclick="openChat('${c.id}')">
+          <div class="flex items-center space-x-3">
+            ${renderSystemAvatar(c.peerName)}
+            <div class="text-left">
+              <p class="text-sm font-bold text-gray-800">${c.peerName}</p>
+              <p class="text-[11px] text-gray-500 mt-1 line-clamp-1">${c.lastMsg}</p>
+            </div>
+          </div>
+          ${c.unread ? `<span class="px-2 py-1 rounded-full bg-rose-500 text-white text-[10px] font-bold">${c.unread}</span>` : `<span class="text-[10px] text-gray-400">已读</span>`}
+        </button>
+      `).join('');
+    }
+
+    // notices
+    if (!state.notices.length) {
+      noticeWrap.innerHTML = `
+        <div class="bg-white rounded-2xl p-6 shadow-sm text-center">
+          <div class="w-14 h-14 mx-auto rounded-2xl bg-slate-100 flex items-center justify-center">
+            <span class="iconify text-3xl text-gray-400" data-icon="solar:bell-linear"></span>
+          </div>
+          <p class="mt-3 text-sm font-semibold text-gray-800">暂无通知</p>
+          <p class="mt-1 text-xs text-gray-500">发布信息后，会在这里收到审核结果。</p>
+        </div>
+      `;
+    } else {
+      noticeWrap.innerHTML = state.notices.map(n => `
+        <div class="bg-white rounded-2xl p-4 shadow-sm">
+          <p class="text-sm font-bold text-gray-800">${n.title}</p>
+          <p class="text-[11px] text-gray-500 mt-1">${n.time}</p>
+        </div>
+      `).join('');
+    }
+
+    switchMsgTab('chat');
+  }
+
+  function startChatWithAuthor(postId) {
+    const p = findPostById(postId);
+    if (!p) return;
+
+    // find existing chat
+    let chat = state.chats.find(c => c.peerName === p.authorName);
+    if (!chat) {
+      const opener = quickOpener(p.type);
+      chat = { id: 'c' + Math.random().toString(16).slice(2), peerName: p.authorName, lastMsg: opener, unread: 0 };
+      state.chats.unshift(chat);
+      toast('已发起私信（示意）');
+    } else {
+      toast('进入已有会话（示意）');
+    }
+
+    go('messages');
+  }
+
+  function quickOpener(type) {
+    if (type==='rental') return '你好，请问房源还在吗？方便说下大概位置和可看房时间吗？';
+    if (type==='used') return '你好，请问还出吗？能否补充下使用情况/瑕疵？';
+    if (type==='service') return '你好，想咨询下价格和可上门时间。';
+    if (type==='food') return '你好，请问优惠到什么时候？人均大概多少？';
+    return '你好，想���解一下详情。';
+  }
+
+  function openChat(chatId) {
+    toast('聊天页（MVP可先做会话列表；此处为示意）');
+    const c = state.chats.find(x=>x.id===chatId);
+    if (c) c.unread = 0;
+    renderMessages();
+  }
+
+  /***********************
+   * Profile
+   ***********************/
+  function renderProfile() {
+    document.getElementById('myNickname').innerText = state.myNickname;
+    document.getElementById('myCommunityLabel').innerText = state.currentCommunityName;
+  }
+
+  function openEditNickname() {
+    const next = prompt('修改平台昵称（2-12字符）', state.myNickname);
+    if (!next) return;
+    if (next.length < 2 || next.length > 12) return toast('昵称长度需2-12字符');
+    if (/(vx|微信|电话|中介|加微|同号|二维码|http)/i.test(next)) return toast('昵称含敏感内容');
+    state.myNickname = next;
+    renderProfile();
+    toast('昵称已更新');
+  }
+
+  /***********************
+   * Post (Create / Draft / Review)
+   ***********************/
+  let currentFormType = null;
+  let form = {};
+
+  function openPostModal() {
+    document.getElementById('postModal').classList.remove('hidden');
+  }
+  function closePostModal() {
+    document.getElementById('postModal').classList.add('hidden');
+  }
+
+  function openPostForm(type) {
+    currentFormType = type;
+    form = { title:'', desc:'', community: state.currentCommunityName, area:'', images:0 };
+
+    closePostModal();
+    document.getElementById('postFormModal').classList.remove('hidden');
+
+    const titleMap = { rental:'发布租房', food:'发布美食', used:'发布二手', service:'发布服务' };
+    document.getElementById('postFormTitle').innerText = titleMap[type] || '发布';
+
+    renderPostFormFields(type);
+  }
+
+  function closePostForm() {
+    document.getElementById('postFormModal').classList.add('hidden');
+  }
+
+  function renderPostFormFields(type) {
+    const wrap = document.getElementById('postFormFields');
+
+    const communitySelect = `
+      <div>
+        <p class="text-xs font-bold text-gray-800 mb-2">社区（必填）</p>
+        <button class="w-full bg-slate-50 rounded-2xl px-4 py-3 flex items-center justify-between"
+                onclick="openCommunityPickerForForm()">
+          <span class="text-sm text-gray-800" id="formCommunity">${form.community}</span>
+          <span class="iconify text-xl text-gray-300" data-icon="solar:alt-arrow-right-linear"></span>
+        </button>
+        <p class="text-[10px] text-gray-400 mt-1">位置默认模糊展示，仅显示社区名（可选片区）。</p>
+      </div>
+    `;
+
+    const areaInput = `
+      <div>
+        <p class="text-xs font-bold text-gray-800 mb-2">片区/楼区（选填）</p>
+        <input class="w-full bg-slate-50 rounded-2xl px-4 py-3 text-sm outline-none"
+               placeholder="如：东区 / 西区 / 北门附近（不要填写门牌单元）"
+               oninput="form.area=this.value" />
+      </div>
+    `;
+
+    const titleInput = `
+      <div>
+        <p class="text-xs font-bold text-gray-800 mb-2">标题（必填）</p>
+        <input class="w-full bg-slate-50 rounded-2xl px-4 py-3 text-sm outline-none"
+               placeholder="用一句话说清楚关键信息"
+               oninput="form.title=this.value" />
+      </div>
+    `;
+
+    const descInput = `
+      <div>
+        <p class="text-xs font-bold text-gray-800 mb-2">详情描述（必填）</p>
+        <textarea class="w-full bg-slate-50 rounded-2xl px-4 py-3 text-sm outline-none min-h-[100px]"
+                  placeholder="请勿留下微信/电话/外链/二维码；平台仅支持站内私信"
+                  oninput="form.desc=this.value"></textarea>
+      </div>
+    `;
+
+    const imagesInput = `
+      <div>
+        <p class="text-xs font-bold text-gray-800 mb-2">图片数量（${type==='food'?'至少1张': '建议至少3张'}，示意）</p>
+        <div class="flex items-center space-x-2">
+          <button class="w-10 h-10 rounded-2xl bg-slate-100 flex items-center justify-center"
+                  onclick="form.images=Math.max(0,(form.images||0)-1);document.getElementById('imgCount').innerText=form.images;">
+            <span class="iconify text-xl text-gray-600" data-icon="solar:minus-linear"></span>
+          </button>
+          <div class="flex-1 bg-slate-50 rounded-2xl px-4 py-3 text-sm">
+            已选择 <span id="imgCount" class="font-bold">${form.images||0}</span> 张
+          </div>
+          <button class="w-10 h-10 rounded-2xl bg-slate-100 flex items-center justify-center"
+                  onclick="form.images=(form.images||0)+1;document.getElementById('imgCount').innerText=form.images;">
+            <span class="iconify text-xl text-gray-600" data-icon="solar:add-linear"></span>
+          </button>
+        </div>
+      </div>
+    `;
+
+    let typeFields = '';
+    if (type==='rental') {
+      typeFields = `
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <p class="text-xs font-bold text-gray-800 mb-2">租金/月（必填）</p>
+            <input class="w-full bg-slate-50 rounded-2xl px-4 py-3 text-sm outline-none" placeholder="如：3500"
+                   oninput="form.price=Number(this.value||0)" />
+          </div>
+          <div>
+            <p class="text-xs font-bold text-gray-800 mb-2">方式（必填）</p>
+            <select class="w-full bg-slate-50 rounded-2xl px-4 py-3 text-sm outline-none"
+                    onchange="form.rentType=this.value">
+              <option value="">请选择</option>
+              <option value="整租">整租</option>
+              <option value="合租">合租</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <p class="text-xs font-bold text-gray-800 mb-2">户型（必填）</p>
+          <input class="w-full bg-slate-50 rounded-2xl px-4 py-3 text-sm outline-none" placeholder="如：两室一厅"
+                 oninput="form.layout=this.value" />
+        </div>
+      `;
+    } else if (type==='food') {
+      typeFields = `
+        <div>
+          <p class="text-xs font-bold text-gray-800 mb-2">店名（必填）</p>
+          <input class="w-full bg-slate-50 rounded-2xl px-4 py-3 text-sm outline-none" placeholder="如：老王拉面"
+                 oninput="form.shopName=this.value" />
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <p class="text-xs font-bold text-gray-800 mb-2">品类（必填）</p>
+            <input class="w-full bg-slate-50 rounded-2xl px-4 py-3 text-sm outline-none" placeholder="如：面食/火锅"
+                   oninput="form.category=this.value" />
+          </div>
+          <div>
+            <p class="text-xs font-bold text-gray-800 mb-2">人均（选填）</p>
+            <input class="w-full bg-slate-50 rounded-2xl px-4 py-3 text-sm outline-none" placeholder="如：25"
+                   oninput="form.perCapita=Number(this.value||0)" />
+          </div>
+        </div>
+      `;
+    } else if (type==='used') {
+      typeFields = `
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <p class="text-xs font-bold text-gray-800 mb-2">售价（必填）</p>
+            <input class="w-full bg-slate-50 rounded-2xl px-4 py-3 text-sm outline-none" placeholder="如：280"
+                   oninput="form.price=Number(this.value||0)" />
+          </div>
+          <div>
+            <p class="text-xs font-bold text-gray-800 mb-2">成色（必填）</p>
+            <select class="w-full bg-slate-50 rounded-2xl px-4 py-3 text-sm outline-none"
+                    onchange="form.quality=this.value">
+              <option value="">请选择</option>
+              <option value="全新">全新</option>
+              <option value="95新">95新</option>
+              <option value="9成新">9成新</option>
+              <option value="8成新">8成新</option>
+            </select>
+          </div>
+        </div>
+      `;
+    } else {
+      typeFields = `
+        <div>
+          <p class="text-xs font-bold text-gray-800 mb-2">服务类型（必填）</p>
+          <input class="w-full bg-slate-50 rounded-2xl px-4 py-3 text-sm outline-none" placeholder="如：保洁/维修/跑腿"
+                 oninput="form.serviceType=this.value" />
+        </div>
+        <div>
+          <p class="text-xs font-bold text-gray-800 mb-2">参考价（选填）</p>
+          <input class="w-full bg-slate-50 rounded-2xl px-4 py-3 text-sm outline-none" placeholder="如：¥99起"
+                 oninput="form.refPrice=this.value" />
+        </div>
+      `;
+    }
+
+    wrap.innerHTML = `
+      ${communitySelect}
+      ${areaInput}
+      ${typeFields}
+      ${titleInput}
+      ${descInput}
+      ${imagesInput}
+    `;
+  }
+
+  function openCommunityPickerForForm() {
+    // reuse sheet but on pick update form community
+    openCommunitySheet();
+    toast('选择社区后将回填到发布表单');
+    // override switchCommunity for form? We'll keep community sheet selection for app,
+    // but also reflect into form community after switching.
+  }
+
+  function validatePost() {
+    const bad = /(vx|微信|电话|手机号|http|www|二维码|加微|同号)/i;
+    if (!form.community) return '请选择社区';
+    if (!form.title || form.title.trim().length<4) return '标题至少4个字';
+    if (!form.desc || form.desc.trim().length<10) return '描述至少10个字';
+    if (bad.test(form.title) || bad.test(form.desc)) return '内容疑似包含联系方式/引流信息';
+    if (currentFormType==='rental') {
+      if (!form.price || form.price<=0) return '请填写租金';
+      if (!form.rentType) return '请选择整租/合租';
+      if (!form.layout) return '请填写户型';
+      if ((form.images||0) < 3) return '租房建议至少3张图片（示意）';
+    }
+    if (currentFormType==='food') {
+      if (!form.shopName) return '请填写店名';
+      if (!form.category) return '请填写品类';
+      if ((form.images||0) < 1) return '美食至少1张图片（示意）';
+    }
+    if (currentFormType==='used') {
+      if (!form.price || form.price<=0) return '请填写售价';
+      if (!form.quality) return '请选择成色';
+      if ((form.images||0) < 3) return '二手建议至少3张图片（示意）';
+    }
+    if (currentFormType==='service') {
+      if (!form.serviceType) return '请填写服务类型';
+    }
+    return null;
+  }
+
+  function submitPost() {
+    const err = validatePost();
+    if (err) return toast(err);
+
+    const newPost = {
+      id: 'my' + Math.random().toString(16).slice(2),
+      type: currentFormType,
+      authorName: state.myNickname,
+      time: '刚刚',
+      communityName: form.community,
+      area: form.area || '',
+      title: form.title.trim(),
+      desc: form.desc.trim(),
+      images: form.images || 0,
+
+      // type specific
+      price: form.price,
+      rentType: form.rentType,
+      layout: form.layout,
+      shopName: form.shopName,
+      category: form.category,
+      perCapita: form.perCapita,
+      quality: form.quality,
+      serviceType: form.serviceType,
+      refPrice: form.refPrice,
+      status: 'pending'
+    };
+
+    state.myPosts.unshift(newPost);
+
+    state.notices.unshift({
+      id:'n'+Math.random().toString(16).slice(2),
+      type:'pending',
+      title:`你发布的【${newPost.title}】已提交审核`,
+      time: new Date().toISOString().slice(0,10) + ' ' + new Date().toTimeString().slice(0,5),
+    });
+
+    closePostForm();
+    toast('已提交审核');
+    go('my-posts');
+    renderMyPosts();
+
+    // mock async review result
+    setTimeout(()=>mockReviewResult(newPost.id), 1500);
+  }
+
+  function mockReviewResult(id) {
+    const p = state.myPosts.find(x=>x.id===id);
+    if (!p) return;
+
+    // mock reject 30% if contains suspicious words
+    const suspicious = /(最低|全网|加急|稳赚|包过|带看)/.test(p.desc);
+    const reject = suspicious || Math.random()<0.25;
+
+    if (reject) {
+      p.status = 'rejected';
+      p.rejectReason = '疑似广告/引流或信息不完整（示意）。请删除营销用语，并补充关键细节后重新提交。';
+      state.notices.unshift({
+        id:'n'+Math.random().toString(16).slice(2),
+        type:'rejected',
+        title:`你发布的【${p.title}】未通过审核：${p.rejectReason}`,
+        time: new Date().toISOString().slice(0,10) + ' ' + new Date().toTimeString().slice(0,5),
+      });
+    } else {
+      p.status = 'published';
+      state.notices.unshift({
+        id:'n'+Math.random().toString(16).slice(2),
+        type:'published',
+        title:`你发布的【${p.title}】已通过审核并展示`,
+        time: new Date().toISOString().slice(0,10) + ' ' + new Date().toTimeString().slice(0,5),
+      });
+
+      // add to community feed if matches current community
+      if (p.communityName === state.currentCommunityName) {
+        state.posts.unshift(p);
+        renderCommunityFeed();
+      }
+    }
+
+    if (state.currentPage==='my-posts') renderMyPosts();
+    if (state.currentPage==='messages') renderMessages();
+  }
+
+  function saveDraftAndClose() {
+    state.draft = { type: currentFormType, form: JSON.parse(JSON.stringify(form)) };
+    closePostForm();
+    toast('已保存草稿（示意）');
+  }
+
+  /***********************
+   * My Posts
+   ***********************/
+  function setMyPostFilter(filter) {
+    state.myPostFilter = filter;
+    // tabs UI
+    const map = {all:'postTabAll', pending:'postTabPending', published:'postTabPublished', rejected:'postTabRejected'};
+    Object.entries(map).forEach(([k,id]) => {
+      const el = document.getElementById(id);
+      const active = k === filter;
+      el.classList.toggle('bg-orange-500', active);
+      el.classList.toggle('text-white', active);
+      el.classList.toggle('text-gray-500', !active);
+    });
+    renderMyPosts();
+  }
+
+  function renderMyPosts() {
+    const list = document.getElementById('myPostsList');
+    const posts = state.myPosts.filter(p => {
+      if (state.myPostFilter==='all') return true;
+      if (state.myPostFilter==='pending') return p.status==='pending';
+      if (state.myPostFilter==='published') return p.status==='published';
+      if (state.myPostFilter==='rejected') return p.status==='rejected';
+      return true;
+    });
+
+    if (!posts.length) {
+      list.innerHTML = `
+        <div class="bg-white rounded-2xl p-6 shadow-sm text-center">
+          <div class="w-14 h-14 mx-auto rounded-2xl bg-slate-100 flex items-center justify-center">
+            <span class="iconify text-3xl text-gray-400" data-icon="solar:document-add-linear"></span>
+          </div>
+          <p class="mt-3 text-sm font-semibold text-gray-800">暂无记录</p>
+          <p class="mt-1 text-xs text-gray-500">点击下方“+”发布租房/美食/二手/服务。</p>
+        </div>
+      `;
+      return;
+    }
+
+    list.innerHTML = posts.map(p => {
+      const t = typeLabel(p.type);
+      const statusChip = p.status==='pending'
+        ? `<span class="chip bg-slate-100 text-slate-600">审核中</span>`
+        : p.status==='published'
+        ? `<span class="chip bg-emerald-50 text-emerald-600">已发布</span>`
+        : `<span class="chip bg-rose-50 text-rose-600">被驳回</span>`;
+
+      return `
+        <div class="bg-white rounded-2xl p-4 shadow-sm">
+          <div class="flex items-start justify-between">
+            <div class="flex items-center space-x-3">
+              <div class="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center">
+                <span class="iconify text-2xl text-gray-400" data-icon="solar:gallery-linear"></span>
+              </div>
+              <div>
+                <div class="flex items-center space-x-2">
+                  <span class="chip ${t.cls}">${t.text}</span>
+                  ${statusChip}
+                </div>
+                <p class="mt-1 text-sm font-bold text-gray-800 line-clamp-1">${p.title}</p>
+                <p class="text-[10px] text-gray-400 mt-1">${p.communityName}${p.area?`（${p.area}）`:''} · ${p.time}</p>
+              </div>
+            </div>
+            <button class="text-xs text-blue-500 font-semibold" onclick="openDetail('${p.id}')">查看</button>
+          </div>
+
+          ${p.status==='rejected' ? `
+            <div class="mt-3 bg-rose-50 rounded-2xl p-3">
+              <p class="text-xs font-bold text-rose-700">驳回原因</p>
+              <p class="text-[11px] text-rose-700/90 mt-1 leading-relaxed">${p.rejectReason || '原因未知'}</p>
+              <button class="mt-2 text-xs font-semibold text-rose-700" onclick="reSubmit('${p.id}')">修改并重新提交</button>
+            </div>
+          ` : ``}
+
+          ${p.status==='published' ? `
+            <div class="mt-3 flex space-x-2">
+              <button class="flex-1 h-10 rounded-xl bg-slate-100 text-gray-700 text-xs font-semibold" onclick="toast('编辑（示意）')">编辑</button>
+              <button class="flex-1 h-10 rounded-xl bg-slate-100 text-gray-700 text-xs font-semibold" onclick="takeDown('${p.id}')">下架</button>
+            </div>
+          ` : ``}
+        </div>
+      `;
+    }).join('');
+  }
+
+  function reSubmit(id) {
+    const p = state.myPosts.find(x=>x.id===id);
+    if (!p) return;
+    toast('进入编辑并重新提交（示意：直接改为审核中）');
+    p.status = 'pending';
+    delete p.rejectReason;
+    state.notices.unshift({
+      id:'n'+Math.random().toString(16).slice(2),
+      type:'pending',
+      title:`你修改的【${p.title}】已重新提交审核`,
+      time: new Date().toISOString().slice(0,10) + ' ' + new Date().toTimeString().slice(0,5),
+    });
+    renderMyPosts();
+  }
+
+  function takeDown(id) {
+    const p = state.myPosts.find(x=>x.id===id);
+    if (!p) return;
+    p.status = 'down';
+    toast('已下架（示意）');
+    // also remove from community feed if exists
+    state.posts = state.posts.filter(x=>x.id!==id);
+    renderCommunityFeed();
+    renderMyPosts();
+  }
+
+  /***********************
+   * Search & Safety Tips (Simple)
+   ***********************/
+  function openSearch() {
+    toast('搜索（MVP可做关键词检索；此处为示意）');
+  }
+  function openSafetyTips() {
+    alert(
+`发布与沟通规范（MVP）：
+1）禁止中介、广告引流。
+2）禁止留下微信/电话/外链/二维码（含正文与图片）。
+3）仅站内私信沟通；发现违规可举报/拉黑。
+4）位置默认模糊展示，仅到社区名（可选片区）。`
+    );
+  }
+
+  /***********************
+   * Init
+   ***********************/
+  document.getElementById('currentCommunityName').innerText = state.currentCommunityName;
+  document.getElementById('myCommunityLabel').innerText = state.currentCommunityName;
+  renderCommunityFeed();
+  renderProfile();
+  showPage('community');
+</script>
+</body>
+</html>
