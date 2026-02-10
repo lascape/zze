@@ -1,0 +1,59 @@
+<!-- 个人中心页 -->
+<view class="profile-tab">
+  <!-- 用户信息卡片 -->
+  <view class="user-card">
+    <view class="user-info">
+      <view class="user-avatar">
+        <t-icon name="user" size="32" color="#999" />
+      </view>
+      <view class="user-details">
+        <view class="user-name-row">
+          <text class="user-name">{{ nickname }}</text>
+          <view class="user-badge">平台昵称</view>
+        </view>
+        <text class="user-community">当前社区：{{ currentCommunity }}</text>
+      </view>
+    </view>
+    <text class="edit-btn" bindtap="onEditTap">编辑</text>
+  </view>
+
+  <!-- 功能菜单列表 -->
+  <view class="menu-list">
+    <!-- 我的发布 -->
+    <view class="menu-item" bindtap="onMyPostsTap">
+      <view class="menu-left">
+        <view class="menu-icon orange">
+          <t-icon name="file-text" size="20" color="#F97316" />
+        </view>
+        <text class="menu-title">我的发布</text>
+      </view>
+      <t-icon name="chevron-right" size="20" color="#ccc" />
+    </view>
+
+    <view class="menu-divider"></view>
+
+    <!-- 我的收藏 -->
+    <view class="menu-item" bindtap="onFavoritesTap">
+      <view class="menu-left">
+        <view class="menu-icon rose">
+          <t-icon name="heart" size="20" color="#F43F5E" />
+        </view>
+        <text class="menu-title">我的收藏</text>
+      </view>
+      <t-icon name="chevron-right" size="20" color="#ccc" />
+    </view>
+
+    <view class="menu-divider"></view>
+
+    <!-- 发布与沟通规范 -->
+    <view class="menu-item" bindtap="onSafetyTap">
+      <view class="menu-left">
+        <view class="menu-icon green">
+          <t-icon name="check-circle" size="20" color="#10B981" />
+        </view>
+        <text class="menu-title">发布与沟通规范</text>
+      </view>
+      <t-icon name="chevron-right" size="20" color="#ccc" />
+    </view>
+  </view>
+</view>

@@ -156,7 +156,38 @@ Page({
     discoverActiveTab: 'rental',
     selectedFilters: [],
     currentFilters: [],
-    discoverPosts: []
+    discoverPosts: [],
+
+    // 消息数据
+    chats: [
+      {
+        id: 'chat1',
+        peerName: '张三',
+        lastMsg: '房子还在吗？',
+        unread: 2
+      },
+      {
+        id: 'chat2',
+        peerName: '李四',
+        lastMsg: '好的，谢谢',
+        unread: 0
+      }
+    ],
+    notices: [
+      {
+        id: 'notice1',
+        title: '您发布的帖子已通过审核',
+        time: '2024-03-20 10:30'
+      },
+      {
+        id: 'notice2',
+        title: '系统消息：社区规范更新',
+        time: '2024-03-19 15:20'
+      }
+    ],
+
+    // 个人信息数据
+    nickname: '邻居4821'
   },
 
   onLoad() {
@@ -386,6 +417,81 @@ Page({
           icon: 'none'
         });
       }
+    });
+  },
+
+  // 消息页事件处理
+  onChatTap(e) {
+    const id = e.detail.id;
+    wx.showToast({
+      title: `打开聊天 ${id}`,
+      icon: 'none'
+    });
+  },
+
+  onSafetyTipsTap() {
+    wx.showToast({
+      title: '查看沟通规范',
+      icon: 'none'
+    });
+  },
+
+  // 个人中心页事件处理
+  onEditNicknameTap() {
+    wx.showModal({
+      title: '修改昵称',
+      editable: true,
+      placeholderText: '请输入新昵称（2-12字符）',
+      content: this.data.nickname,
+      success: (res) => {
+        if (res.confirm && res.content) {
+          const newNickname = res.content.trim();
+          if (newNickname.length < 2 || newNickname.length > 12) {
+            wx.showToast({
+              title: '昵称长度需2-12字符',
+              icon: 'none'
+            });
+            return;
+          }
+          if (/(vx|微信|电话|中介|加微|同号|二维码|http)/i.test(newNickname)) {
+            wx.showToast({
+              title: '昵称含敏感内容',
+              icon: 'none'
+            });
+            return;
+          }
+          this.setData({
+            nickname: newNickname
+          });
+          wx.showToast({
+            title: '昵称已更新',
+            icon: 'success'
+          });
+        }
+      }
+    });
+  },
+
+  onMyPostsTap() {
+    wx.showToast({
+      title: '我的发布',
+      icon: 'none'
+    });
+  },
+
+  onFavoritesTap() {
+    wx.showToast({
+      title: '我的收藏',
+      icon: 'none'
+    });
+  },
+
+  onProfileSafetyTap() {
+    wx.showModal({
+      title: '发布与沟通规范',
+      content: '1. 禁止留微信/电话等联系方式\n2. 仅站内私信沟通\n3. 禁止发布违法违规信息\n4. 保护个人隐私安全',
+      showCancel: false,
+      confirmText: '知道了'
     });
   }
 })

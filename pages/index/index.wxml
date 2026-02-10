@@ -68,20 +68,24 @@
     />
 
     <!-- 消息页 -->
-    <view wx:if="{{currentTab === 'messages'}}" class="tab-content">
-      <view class="empty-state">
-        <t-icon name="chat" size="48" color="#ccc" />
-        <text class="empty-text">暂无消息</text>
-      </view>
-    </view>
+    <messages-tab
+      wx:if="{{currentTab === 'messages'}}"
+      chats="{{chats}}"
+      notices="{{notices}}"
+      bind:chattap="onChatTap"
+      bind:safetytipstap="onSafetyTipsTap"
+    />
 
     <!-- 我的页 -->
-    <view wx:if="{{currentTab === 'profile'}}" class="tab-content">
-      <view class="empty-state">
-        <t-icon name="user" size="48" color="#ccc" />
-        <text class="empty-text">个人中心</text>
-      </view>
-    </view>
+    <profile-tab
+      wx:if="{{currentTab === 'profile'}}"
+      nickname="{{nickname}}"
+      currentCommunity="{{currentCommunity}}"
+      bind:edittap="onEditNicknameTap"
+      bind:mypoststap="onMyPostsTap"
+      bind:favoritestap="onFavoritesTap"
+      bind:safetytap="onProfileSafetyTap"
+    />
   </scroll-view>
 
   <!-- 底部导航栏 -->

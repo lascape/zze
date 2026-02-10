@@ -2,6 +2,8 @@
   "usingComponents": {
     "community-tab": "/pages/community/community",
     "discover-tab": "/pages/discover/discover",
+    "messages-tab": "/pages/messages/messages",
+    "profile-tab": "/pages/profile/profile",
     "navigation-bar": "/components/navigation-bar/navigation-bar",
     "t-icon": "tdesign-miniprogram/icon/icon",
     "t-cell": "tdesign-miniprogram/cell/cell",

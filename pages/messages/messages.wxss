@@ -1,0 +1,186 @@
+/* pages/messages/messages.wxss */
+.messages-tab {
+  min-height: 100%;
+  background-color: #f5f5f5;
+  padding: 16px;
+}
+
+/* 顶部标题栏 */
+.messages-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.header-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #000;
+}
+
+.header-link {
+  font-size: 12px;
+  color: #1677FF;
+}
+
+/* 分段控制器 */
+.tab-selector {
+  background-color: #fff;
+  border-radius: 16px;
+  padding: 4px;
+  display: flex;
+  gap: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  margin-bottom: 12px;
+}
+
+.tab-item {
+  flex: 1;
+  padding: 8px 0;
+  border-radius: 12px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: #666;
+  transition: all 0.3s;
+}
+
+.tab-item.active {
+  background-color: #FF6B35;
+  color: #fff;
+}
+
+/* 内容区域 */
+.content-section {
+  margin-top: 12px;
+}
+
+/* 空状态 */
+.empty-state {
+  background-color: #fff;
+  border-radius: 16px;
+  padding: 48px 24px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.empty-icon {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 16px;
+  border-radius: 16px;
+  background-color: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.empty-title {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #000;
+  margin-bottom: 8px;
+}
+
+.empty-desc {
+  display: block;
+  font-size: 12px;
+  color: #999;
+}
+
+/* 私信列表 */
+.chat-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.chat-item {
+  background-color: #fff;
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.chat-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
+.chat-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background-color: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.chat-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
+
+.chat-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #000;
+}
+
+.chat-preview {
+  font-size: 11px;
+  color: #999;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chat-right {
+  flex-shrink: 0;
+}
+
+.chat-read {
+  font-size: 10px;
+  color: #ccc;
+}
+
+/* 通知列表 */
+.notice-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.notice-item {
+  background-color: #fff;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.notice-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #000;
+}
+
+.notice-time {
+  font-size: 11px;
+  color: #999;
+}
